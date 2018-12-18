@@ -23,6 +23,10 @@
 #include <map>
 using namespace std;
 
+#define SCREENSIZEWIDTH 1080
+#define SCREENSIZEHEIGHT 720
+
+
 map<int, string> toys = {
     { 1, "Teddy bear" },
     { 2, "Toy blocks" },
@@ -64,21 +68,15 @@ public:
 };
 
 
-int generateHash(string *username, string *password) {
-     string s(*username+*password);
+size_t generateHash(string *username, string *password) {
      hash<string> hash_fn;
-
-     size_t hash = hash_fn(s);
-
-     cout << hash << '\n'<<"hi";
-
-     return 
+     return  hash_fn(*username+*password);
 }
 
-bool compareHash(int *hash, string *password, string *username) {
-     return generateHash(password, username) == *hash;
+bool compareHash(size_t *hash, string *password, string *username) {
+    return generateHash(password, username) == *hash;
 }
-
+/*
 void password (){
 
   cout << "same hashes:\n" << boolalpha;
@@ -86,38 +84,60 @@ void password (){
   cout << "str1 and str2: " << (==str_hash(str2)) << '\n';
 }*/
 
-void mouseInput ()
+POINT mouseInput ()
 {
      POINT coord;
      GetCursorPos(&coord);
-     cout << coord.x << "," << coord.y << "\n";
+
+     POINT output;
+
+     if (coord.x > SCREENSIZEWIDTH || coord.y > SCREENSIZEHEIGHT|| coord.y<0||coord.x<0) {
+       output.x=-1;
+       output.y=-1;
+     } else {
+       output=coord;
+     }
+
+     return output;
 }
 
+bool clicked(int *xMin, int *yMin, int *xMax, int *yMax) {
+
+}
 
 void setScreenPosAndSize () {
      HWND consoleWindow = GetConsoleWindow();
-
-	SetWindowPos(consoleWindow, HWND_TOP, -7, -30, 500, 500, SWP_NOZORDER);
+	   SetWindowPos(consoleWindow, HWND_TOP, -7, -30, 1080, 720, SWP_NOZORDER);
 }
 
 
 void changeColor(int foreground, int background) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), foreground + background * 16);
-
 }
+
 
 int main()
 {
      //string /***/username= /*new (nothrow) string (*/"Santa"/*)*/;
      //string /***/password= /*new (nothrow) string (*/"hi"/*)*/;
 
-     string *username = new string("jason");
+  /*   string *username = new string("jason");
      string *password = new string("fu");
+     string *username2 = new string("jason");
+     string *password2 = new string("fu");*/
 
      //cout<<generateHash(username, password);
 
      changeColor(5, 6);
-     generateHash(username, password);
+
+     HWND consoleWindow = GetConsoleWindow();
+     DWORD prev_mode;
+     GetConsoleMode(consoleWindow, &prev_mode);
+     SetConsoleMode(consoleWindow, prev_mode & ~ENABLE_QUICK_EDIT_MODE);
+
+
+     //size_t *hash = new size_t(generateHash(username, password));
+     //cout<<compareHash(hash, username2, password2);
 
      //animations2();
 
@@ -125,7 +145,9 @@ int main()
 
      setScreenPosAndSize();
 
-     mouseInput();
+     while (true)
+     cout<<((GetKeyState(VK_LBUTTON) & 0x100) != 0)<<"\n";
+     cout << mouseInput().x << "," << mouseInput().y << "\n";
 
      _getch();
      return EXIT_SUCCESS;
