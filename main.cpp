@@ -101,7 +101,14 @@ POINT mouseInput ()
      return output;
 }
 
-bool clicked(int *xMin, int *yMin, int *xMax, int *yMax) {
+bool cursorDown() {
+     return ((GetKeyState(VK_LBUTTON) & 0x100) != 0);
+}
+
+bool clicked(int xMin, int yMin, int xMax, int yMax) {
+     POINT * mouse = new POINT;
+     *mouse = mouseInput();
+     return (mouse->x>xMin && mouse->x<xMax && mouse->y>yMin && mouse->y<yMax && cursorDown());
 
 }
 
@@ -115,6 +122,80 @@ void changeColor(int foreground, int background) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), foreground + background * 16);
 }
 
+void welcome(){
+
+     system("color F9");
+
+     cout << "                  ()                           " << "\t\t" << "                  ()                           " << endl;
+     cout << "                  /\\                           " << "\t\t" << "                  /\\                          " << endl;
+     cout << "                 //\\\\                          " << "\t\t" << "                 //\\\\                        " << endl;
+     cout << "                <<  >>                         " << "\t\t" << "                <<  >>                         " << endl;
+     cout << "             ()  \\\\//  ()                      " << "\t\t" << "             ()  \\\\//  ()                    " << endl;
+     cout << "  ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "  ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "     \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "     \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "      \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "      \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "       \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "       \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "           \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "        \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "       ()-= >>\\\\< <\\\\> >\\\\<< =-()                 " << "\t\t" << "    ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "           ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "        ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "       .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "     .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "       //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "    //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "     /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "   /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "    ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << " ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "              ()  //\\\\  ()                        " << "\t\t" << "           ()  //\\\\  ()                      " << endl;
+     cout << "                 <<  >>                           " << "\t\t" << "              <<  >>                           " << endl;
+     cout << "                  \\\\//                            " << "\t\t" << "               \\\\//                          " << endl;
+     cout << "                   \\/                             " << "\t\t" << "                \\/                            " << endl;
+     cout << "                   ()                             " << "\t\t" << "                ()                             " << endl;
+
+}
+
+void menu(){
+
+}
+
+
+/*
+login.txt
+#of users
+(username
+hash) x # of users
+
+
+*/
+
+int login() {
+     string *username = new string;
+     string *password = new string;
+
+     cout<<"Enter username: ";
+     cin>>*username;
+     cout<<"Enter password: ";
+     cin>>*password;
+
+     ifstream *loginFile= new ifstream;
+     loginFile->open("login.txt");
+
+     int *numberOfUsers = new int;
+
+     bool *usernameFound = new bool(false);
+
+     size_t *hashToTest
+
+     if (loginFile.isopen()) {
+          myfile>>*numberOfUsers;
+
+          for (int i = 0; i<*numberOfUsers; i++) {
+               string *usernameToTest = new string;
+               myfile>>*usernameToTest;
+               if (*username==*usernameToTest) {
+                    usernameFound=true;
+               }
+          }
+     }
+
+
+}
 
 int main()
 {
@@ -130,10 +211,21 @@ int main()
 
      changeColor(5, 6);
 
-     HWND consoleWindow = GetConsoleWindow();
-     DWORD prev_mode;
-     GetConsoleMode(consoleWindow, &prev_mode);
-     SetConsoleMode(consoleWindow, prev_mode & ~ENABLE_QUICK_EDIT_MODE);
+
+     //setup console inorder to handle mouse clicks
+     HANDLE input_handle;
+     input_handle = GetStdHandle(STD_INPUT_HANDLE);
+     SetConsoleMode(input_handle, ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT | ENABLE_INSERT_MODE | ENABLE_EXTENDED_FLAGS | ENABLE_MOUSE_INPUT);
+
+
+     setScreenPosAndSize();
+
+
+
+     welcome();
+
+     //int *permission = new int;
+     //*permission = login();
 
 
      //size_t *hash = new size_t(generateHash(username, password));
@@ -141,13 +233,8 @@ int main()
 
      //animations2();
 
-     //password();
-
-     setScreenPosAndSize();
-
-     while (true)
-     cout<<((GetKeyState(VK_LBUTTON) & 0x100) != 0)<<"\n";
-     cout << mouseInput().x << "," << mouseInput().y << "\n";
+     //while (true)
+     //cout<<clicked(100, 150, 200, 250)<<"\n"<<mouseInput().x<<" "<<mouseInput().y<<"\n";
 
      _getch();
      return EXIT_SUCCESS;
