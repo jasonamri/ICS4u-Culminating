@@ -40,6 +40,23 @@ map<int, string> toys = {
     { 10, "Pyjamas" }
 };
 
+void delay(long unsigned int millis)
+{
+	//start timer
+	clock_t start = clock();
+	//check is time has elasped
+	while ((start + ((float)(millis / 1000) * CLOCKS_PER_SEC)) > (unsigned)clock())
+		;
+}
+
+/*
+jason:admin
+jacob:password
+santa:santa
+mrsclaus:cookies
+elf1:hohoho
+*/
+
 class User {
 private:
      //name of elf
@@ -73,9 +90,11 @@ size_t generateHash(string *username, string *password) {
      return  hash_fn(*username+*password);
 }
 
+
+/*
 bool compareHash(size_t *hash, string *password, string *username) {
     return generateHash(password, username) == *hash;
-}
+}*/
 /*
 void password (){
 
@@ -122,49 +141,139 @@ void changeColor(int foreground, int background) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), foreground + background * 16);
 }
 
-void welcome(){
 
-     system("color F9");
 
-     cout << "                  ()                           " << "\t\t" << "                  ()                           " << endl;
-     cout << "                  /\\                           " << "\t\t" << "                  /\\                          " << endl;
-     cout << "                 //\\\\                          " << "\t\t" << "                 //\\\\                        " << endl;
-     cout << "                <<  >>                         " << "\t\t" << "                <<  >>                         " << endl;
-     cout << "             ()  \\\\//  ()                      " << "\t\t" << "             ()  \\\\//  ()                    " << endl;
-     cout << "  ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "  ()._____   /\\   \\\\   /\\   _____.()       " << endl;
-     cout << "     \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "     \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
-     cout << "      \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "      \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
-     cout << "       \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "       \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
-     cout << "           \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "        \\\\\\\\///\\\\//\\\\\\////            " << endl;
-     cout << "       ()-= >>\\\\< <\\\\> >\\\\<< =-()                 " << "\t\t" << "    ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
-     cout << "           ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "        ////\\\\\\//\\\\///\\\\\\\\            " << endl;
-     cout << "       .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "     .--\\\\/--\\//--\\//--\\//--.             " << endl;
-     cout << "       //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "    //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
-     cout << "     /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "   /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
-     cout << "    ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << " ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
-     cout << "              ()  //\\\\  ()                        " << "\t\t" << "           ()  //\\\\  ()                      " << endl;
-     cout << "                 <<  >>                           " << "\t\t" << "              <<  >>                           " << endl;
-     cout << "                  \\\\//                            " << "\t\t" << "               \\\\//                          " << endl;
-     cout << "                   \\/                             " << "\t\t" << "                \\/                            " << endl;
-     cout << "                   ()                             " << "\t\t" << "                ()                             " << endl;
-
-}
-
-void menu(){
-
-}
 
 
 /*
 login.txt
 #of users
 (username
-hash) x # of users
+hash
+permissionLevel) x # of users
 
+
+permission level
+1: elf
+2: ms. claus
+3: mr. claus
+4: admin
 
 */
 
-int login() {
+int login(string *username, string *password) {
+
+     ifstream *loginFile = new ifstream;
+     loginFile->open("login.txt");
+
+     int *numberOfUsers = new int;
+
+     bool *usernameFound = new bool(false);
+
+     string *usernameToTest = new string;
+     size_t *hashToTest = new size_t;
+     int *permissionLevel = new int;
+
+     if (loginFile->is_open()) {
+          *loginFile>> *numberOfUsers;
+
+          for (int i = 0; i<*numberOfUsers; i++) {
+
+               *loginFile>>*usernameToTest;
+               *loginFile>> *hashToTest;
+               *loginFile>> *permissionLevel;
+
+               if (*username==*usernameToTest) {
+                    *usernameFound=true;
+                    break;
+               }
+          }
+
+
+          loginFile->close();
+
+          if (generateHash(username, password)==*hashToTest) {
+               return *permissionLevel;
+          } else {
+               return 0;
+          }
+
+
+     } else {
+          return -1;
+     }
+
+
+}
+
+
+
+
+
+
+void menu1(){
+
+in the workshop menu
+
+add new child
+view/edit child
+update niceness rating
+
+change password
+
+
+}
+
+santa() {
+
+     workshop progress
+
+
+     add new child
+     view/edit child
+     update niceness rating
+     auto assign gift to child
+
+     auto assign all gifts to all children
+     purge list of children over 18
+
+     assign toy to elf
+
+     change password
+
+}
+
+
+ms claus() {
+
+     add elf
+     fire elf
+     reset elf password
+
+     change personal password
+
+}
+
+
+admin() {
+
+     reset to default
+     january mode
+
+
+}
+
+
+
+int main()
+{
+
+
+     welcome();
+
+
+     int *permission = new int;
+
      string *username = new string;
      string *password = new string;
 
@@ -173,43 +282,32 @@ int login() {
      cout<<"Enter password: ";
      cin>>*password;
 
-     ifstream *loginFile= new ifstream;
-     loginFile->open("login.txt");
 
-     int *numberOfUsers = new int;
+     *permission = login();
 
-     bool *usernameFound = new bool(false);
+     while(*permission == 0) {
 
-     size_t *hashToTest
 
-     if (loginFile.isopen()) {
-          myfile>>*numberOfUsers;
 
-          for (int i = 0; i<*numberOfUsers; i++) {
-               string *usernameToTest = new string;
-               myfile>>*usernameToTest;
-               if (*username==*usernameToTest) {
-                    usernameFound=true;
-               }
-          }
+          *permission = login();
+     }
+
+     switch(*permission) {
+          case 1:
+               menu1();
+               break;
      }
 
 
-}
+     string *username = new string("santa");
+     string *password = new string("santa");
 
-int main()
-{
-     //string /***/username= /*new (nothrow) string (*/"Santa"/*)*/;
-     //string /***/password= /*new (nothrow) string (*/"hi"/*)*/;
 
-  /*   string *username = new string("jason");
-     string *password = new string("fu");
-     string *username2 = new string("jason");
-     string *password2 = new string("fu");*/
-
-     //cout<<generateHash(username, password);
+     cout<<generateHash(username, password);
 
      changeColor(5, 6);
+
+
 
 
      //setup console inorder to handle mouse clicks
@@ -222,14 +320,12 @@ int main()
 
 
 
-     welcome();
-
-     //int *permission = new int;
-     //*permission = login();
 
 
-     //size_t *hash = new size_t(generateHash(username, password));
-     //cout<<compareHash(hash, username2, password2);
+
+
+
+
 
      //animations2();
 

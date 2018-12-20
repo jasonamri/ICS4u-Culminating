@@ -1,0 +1,54 @@
+5
+Jovan
+1002240000
+1
+1238 fake street
+16
+13
+2
+0
+James
+1007769600
+1
+555 five street
+1
+10
+46
+0
+Luke
+984441600
+1
+665 hendry lane
+1
+14
+23
+0
+Jack
+1005523200
+1
+580 tuscarora drive
+2
+6
+4
+0
+Farrah
+982454400
+0
+123 sesame street
+1
+15
+3
+0
+
+
+
+
+
+Name
+Birthday
+Gender
+Home address
+Number of Siblings
+Cookie Rating
+Niceness Rating
+Toy Assigned
