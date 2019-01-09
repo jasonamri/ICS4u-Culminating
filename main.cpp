@@ -780,7 +780,7 @@ int main(){
      *permission = login(username, password);
 
      while(*permission == 0) {
-               cout << "Error! The Passwod Entered is Incorect. Please check Your Password or Contact your Administrator";
+               cout << "Error! The Passwod Entered is Incorect. Please Check Your Password or Contact your Administrator";
           *permission = login(username, password);
      }
 
