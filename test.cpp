@@ -872,6 +872,13 @@ void welcome(){
 
 }
 
+int getYearsSince(int dateInUnixTime) {
+
+     int secondsSinceEpoch = (int)time(0);
+     return (secondsSinceEpoch - dateInUnixTime)/(60*60*24*365.25);
+
+}
+
 void menu(){
 
 }
@@ -935,6 +942,33 @@ hash) x # of users
 
 }*/
 
+
+int dateAsUnix() {
+
+
+     string dateString = "2001/03/23";
+
+     time_t rawtime;
+     struct tm * timeinfo;
+     int year, month, day;
+
+     string yearString = dateString.substr(0,4);
+
+     year = stoi(yearString);
+     cout << year;
+     cout<< yearString;
+
+     /*
+     time ( &rawtime );
+     timeinfo = localtime ( &rawtime );
+     timeinfo->tm_year = year - 1900;
+     timeinfo->tm_mon = month - 1;
+     timeinfo->tm_mday = day;
+*/
+
+
+}
+
 int main()
 {
      //string /***/username= /*new (nothrow) string (*/"Santa"/*)*/;
@@ -947,7 +981,7 @@ int main()
 
      //cout<<generateHash(username, password);
 
-     changeColor(5, 6);
+     //changeColor(5, 6);
 
 
      //setup console inorder to handle mouse clicks
@@ -956,11 +990,13 @@ int main()
      SetConsoleMode(input_handle, ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT | ENABLE_INSERT_MODE | ENABLE_EXTENDED_FLAGS | ENABLE_MOUSE_INPUT);*/
 
 
-     setScreenPosAndSize();
+     //setScreenPosAndSize();
 
+     //cout<<getYearsSince(985323600);
 
+     cout<<dateAsUnix();
 
-     welcome();
+     //welcome();
 
      //int *permission = new int;
      //*permission = login();
