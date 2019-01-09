@@ -1,0 +1,96 @@
+C:\Users\jason\github\ICS4u-Culminating\main.cpp: In function 'void sortChildren(std::vector<Child>)':
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:404:34: error: no matching function for call to 'std::vector<Child>::swap(int&, int)'
+              children.swap(j, j-1);
+                                  ^
+In file included from c:\mingw\lib\gcc\mingw32\6.3.0\include\c++\vector:64:0,
+                 from C:\Users\jason\github\ICS4u-Culminating\main.cpp:24:
+c:\mingw\lib\gcc\mingw32\6.3.0\include\c++\bits\stl_vector.h:1195:7: note: candidate: void std::vector<_Tp, _Alloc>::swap(std::vector<_Tp, _Alloc>&) [with _Tp = Child; _Alloc = std::allocator<Child>]
+       swap(vector& __x) _GLIBCXX_NOEXCEPT
+       ^~~~
+c:\mingw\lib\gcc\mingw32\6.3.0\include\c++\bits\stl_vector.h:1195:7: note:   candidate expects 1 argument, 2 provided
+C:\Users\jason\github\ICS4u-Culminating\main.cpp: In function 'double selectionSort(int*)':
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:417:25: error: expected primary-expression before '-' token
+    for (i = 0; i < SIZE - 1; i++)
+                         ^
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:422:32: error: expected primary-expression before ';' token
+        for (j = i + 1; j < SIZE; j++) // finding smaller value that Min
+                                ^
+C:\Users\jason\github\ICS4u-Culminating\main.cpp: In function 'void newChild()':
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:544:11: error: expected ';' before 'getline'
+           getline(cin, *birthdayInput)
+           ^~~~~~~
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:548:30: error: request for member 'length' in 'birthdayInput', which is of pointer type 'std::__cxx11::string* {aka std::__cxx11::basic_string<char>*}' (maybe you meant to use '->' ?)
+           if (*birthdayInput.length()!=10) {
+                              ^~~~~~
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:554:44: error: request for member 'at' in 'birthdayInput', which is of pointer type 'std::__cxx11::string* {aka std::__cxx11::basic_string<char>*}' (maybe you meant to use '->' ?)
+                          if (birthdayInput.at(i)!='/') {
+                                            ^~
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:558:53: error: request for member 'at' in 'birthdayInput', which is of pointer type 'std::__cxx11::string* {aka std::__cxx11::basic_string<char>*}' (maybe you meant to use '->' ?)
+                          if (!isdigit(birthdayInput.at(i))) {
+                                                     ^~
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:566:48: error: cannot convert 'std::__cxx11::string {aka std::__cxx11::basic_string<char>}' to 'std::__cxx11::string* {aka std::__cxx11::basic_string<char>*}' for argument '1' to 'int dateAsUnix(std::__cxx11::string*)'
+           *birthday = dateAsUnix(*birthdayInput);
+                                                ^
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:569:24: error: cannot convert 'bool' to 'bool*' in assignment
+                error = true;
+                        ^~~~
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:583:24: error: request for member 'ToLower' in 'genderInput', which is of pointer type 'std::__cxx11::string* {aka std::__cxx11::basic_string<char>*}' (maybe you meant to use '->' ?)
+           *genderInput.ToLower(*genderInput);
+                        ^~~~~~~
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:585:15: error: expected primary-expression before ')' token
+           if ()
+               ^
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:587:6: error: expected primary-expression before '}' token
+      } while (*genderInput != "male" && *genderInput!= "female");
+      ^
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:590:7: error: 'usersFile' was not declared in this scope
+      *usersFile >> *birthday;
+       ^~~~~~~~~
+C:\Users\jason\github\ICS4u-Culminating\main.cpp: In function 'void menuElf()':
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:684:21: error: too few arguments to function 'void viewChild(std::vector<Child>)'
+           viewChild();
+                     ^
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:602:6: note: declared here
+ void viewChild(vector<Child> children){
+      ^~~~~~~~~
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:687:21: error: too few arguments to function 'void viewChild(std::vector<Child>)'
+           viewChild();
+                     ^
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:602:6: note: declared here
+ void viewChild(vector<Child> children){
+      ^~~~~~~~~
+C:\Users\jason\github\ICS4u-Culminating\main.cpp: In function 'void menuSanta()':
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:738:21: error: too few arguments to function 'void viewChild(std::vector<Child>)'
+           viewChild();
+                     ^
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:602:6: note: declared here
+ void viewChild(vector<Child> children){
+      ^~~~~~~~~
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:741:21: error: too few arguments to function 'void viewChild(std::vector<Child>)'
+           viewChild();
+                     ^
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:602:6: note: declared here
+ void viewChild(vector<Child> children){
+      ^~~~~~~~~
+C:\Users\jason\github\ICS4u-Culminating\main.cpp: In function 'int main()':
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:902:23: error: ISO C++ forbids comparison between pointer and integer [-fpermissive]
+      } while(error == 46);
+                       ^~
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:918:37: error: cannot convert 'int**' to 'int (*)[2]' for argument '3' to 'int loadFiles(std::vector<User>, std::vector<Child>, int (*)[2])'
+      loadFiles(users, children, toys);
+                                     ^
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:930:24: error: 'elfMenu' was not declared in this scope
+                elfMenu();
+                        ^
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:933:29: error: 'mrsClausMenu' was not declared in this scope
+                mrsClausMenu();
+                             ^
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:936:28: error: 'mrClausMenu' was not declared in this scope
+                mrClausMenu();
+                            ^
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:939:22: error: 'admin' was not declared in this scope
+                admin();
+                      ^
+C:\Users\jason\github\ICS4u-Culminating\main.cpp:942:22: error: 'error' cannot be used as a function
+                error();
+                      ^

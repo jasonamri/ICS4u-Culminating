@@ -44,8 +44,7 @@ map<int, string> toys = {
     { 10, "Pyjamas" }
 };
 
-void delay(long unsigned int millis)
-{
+void delay(long unsigned int millis){
 	//start timer
 	clock_t start = clock();
 	//check is time has elasped
@@ -59,6 +58,13 @@ santa:santa
 mrsclaus:cookies
 elf1:hohoho
 */
+
+int getYearsSince(int *dateInUnixTime) {
+
+     int secondsSinceEpoch = (int)time(0);
+     return (secondsSinceEpoch - *dateInUnixTime)/(60*60*24*365.25);
+
+}
 
 class User {
 private:
@@ -84,7 +90,7 @@ public:
 
           *yearsSinceHire = getYearsSince(hireDate);
 
-          *toyAssigned = 0
+          *toyAssigned = 0;
 
           *toysMade = *numberOfToysMade;
      }
@@ -97,6 +103,7 @@ public:
      int toyAssignedToElf (){
           return *toyAssigned;
      }
+
      ~User(){
           delete name;
           delete hireDate;
@@ -122,7 +129,7 @@ private:
      //age
      int *age = new (nothrow) int(0);
      //gender
-     bool *gender = new (nothrow) int(0);
+     bool *gender = new (nothrow) bool;
      //home address
      string *homeAddress = new (nothrow) string("");
      //number of siblings
@@ -140,29 +147,37 @@ public:
 
           *name = *nameInput;
           *birthday = *birthdayInput;
-          *age = getYearsSince(*birthday);
+          *age = getYearsSince(birthday);
           *gender = *genderInput;
-          *homeAddress = *homeAddressInput
+          *homeAddress = *homeAddressInput;
           *numberOfSiblings = *numberOfSiblingsInput;
           *cookieRating = 0;
-          *NicenessRating = 50;
+          *nicenessRating = 50;
           *toyAssigned = 0;
      }
-     int assignToy(){
+
+     int getAssignedToy(){
           return *toyAssigned;
      }
-     int changeHomeAddress(){
+     string getHomeAddress(){
           return *homeAddress;
      }
-     int siblingNumber(){
+     int getSiblingNumber(){
           return *numberOfSiblings;
      }
-     int setCookieRating(){
+     int getCookieRating(){
           return *cookieRating;
      }
-     int setNicenessRating(){
+     int getNicenessRating(){
           return *nicenessRating;
      }
+     string getName(){
+          return *name;
+     }
+     void setNicenessRating(int *nicenessInput) {
+          *nicenessRating = *nicenessInput;
+     }
+
 
      ~Child(){
           delete name;
@@ -185,15 +200,9 @@ size_t generateHash(string *username, string *password) {
      return  hash_fn(*username+*password);
 }
 
-int getYearsSince(int dateInUnixTime) {
 
-     int secondsSinceEpoch = (int)time(0);
-     return (secondsSinceEpoch - dateInUnixTime)/(60*60*24*365.25);
 
-}
-
-POINT mouseInput ()
-{
+POINT mouseInput (){
      POINT coord;
      GetCursorPos(&coord);
 
@@ -242,7 +251,9 @@ void setupConsole() {
 }
 
 void error(int errorCode) {
-
+     cout << "Error Code " << errorCode << "Please Contact an Administrator to Address this Issue."<< endl;
+     _getch();
+     system("cls");
 }
 
 int loadFiles(vector<User> users, vector<Child> children, int toys[10][2]) {
@@ -341,23 +352,97 @@ int loadFiles(vector<User> users, vector<Child> children, int toys[10][2]) {
 
 }
 
-int dateAsUnix(string dateString) {
+int dateAsUnix(string * dateString) {
 
-
-     time_t rawtime;
+     time_t rawTime, currentTime;
      struct tm * timeinfo;
-     int year, month, day;
+     struct tm * timeinfoCurrent;
+     int *year, *month, *day;
 
-     year = stoi(dateString.begin(), dateString.begin()+3);
-     cout<<year;
+     string *yearString = new string(dateString->substr(0,4));
+     string *monthString = new string(dateString->substr(5, 2));
+     string *dayString = new string(dateString->substr(8, 2));
 
-     /*
-     time ( &rawtime );
-     timeinfo = localtime ( &rawtime );
-     timeinfo->tm_year = year - 1900;
-     timeinfo->tm_mon = month - 1;
-     timeinfo->tm_mday = day;
-*/
+
+     *year = stoi(*yearString);
+     *month = stoi(*monthString);
+     *day = stoi(*dayString);
+
+     //find the current year for error trapping
+     time(&currentTime);
+     int *currentYear = new int((localtime(&currentTime)->tm_year + 1900));
+
+
+     if (*year<1970 || *year>*currentYear) {
+          //returns error code, since date it invalid
+          return -1;
+     } else {
+          time ( &rawTime );
+          timeinfo = localtime ( &rawTime );
+          timeinfo->tm_year = *year - 1900;
+          timeinfo->tm_mon = *month - 1;
+          timeinfo->tm_mday = *day;
+          timeinfo->tm_sec = 0;
+          timeinfo->tm_min = 0;
+          timeinfo->tm_hour = 12;
+
+          //returns -1 if failed, otherwise unix time
+          return mktime(timeinfo);
+     }
+}
+
+void sortChildren(vector<Child> children) {
+
+     int i(0), j(0), temp(0);
+
+    for (i = 1; i < children.size(); i++)
+    {
+        j = i;
+
+        while (j >= 0 && children.at(j).getName() < children.at(j - 1).getName())
+        {
+             children.swap(j, j-1);
+             j--;
+        }
+    }
+}
+
+double selectionSort(int array[])
+{
+   int i(0), j(0), temp(0);
+   int min(100), pos(0);
+
+   auto start = std::chrono::high_resolution_clock::now();
+
+   for (i = 0; i < SIZE - 1; i++)
+   {
+       min = array[i]; // the first element is Min value
+       pos = i;
+
+       for (j = i + 1; j < SIZE; j++) // finding smaller value that Min
+       {
+           if (array[j] < min)
+           {
+               min = array[j];
+               pos = j;
+           }
+       }
+       temp = array[i]; // swap selected element and Min value
+       array[i] = array[pos];
+       array[pos] = temp;
+   }
+
+   auto finish = std::chrono::high_resolution_clock::now();
+
+   std::chrono::duration<double> elapsed = finish - start;
+
+   return elapsed.count();
+}
+
+
+
+
+void sortUsers() {
 
 
 }
@@ -446,35 +531,60 @@ void newChild() {
      int *numberOfSiblings = new int;
 
      string *birthdayInput = new string;
+     string *genderInput = new string;
+
+     cout<<"Enter Child's name: ";
+     getline(cin, *name);
 
 
-     cout<<"Enter child's name: ";
-     cin>>*name;
-     cout<<"Enter child's birthday (YYYY/MM/DD): "
-     cin>>*birthdayInput;
+     bool *error = new bool;
 
-     bool *error = new bool(false);
+     do {
+          cout<<"Enter Child's birthday (YYYY/MM/DD): "
+          getline(cin, *birthdayInput)
 
-     if (*birthdayInput.length()!=10) {
-          *error = true;
-     } else {
-          for (int i = 0; i<10; i++) {
-               if (i==4 || i== 7) {
-                    if (birthdayInput.at(i)!='/') {
-                         *error = true;
-                    }
-               } else {
-                    if (!isdigit(birthdayInput.at(i))) {
-                         *error = true;
+          *error = false;
+
+          if (*birthdayInput.length()!=10) {
+               *error = true;
+          }
+             else {
+               for (int i = 0; i<10; i++) {
+                    if (i==4 || i== 7) {
+                         if (birthdayInput.at(i)!='/') {
+                              *error = true;
+                         }
+                    } else {
+                         if (!isdigit(birthdayInput.at(i))) {
+                              *error = true;
+                         }
                     }
                }
           }
-     }
 
 
-     *birthday =
+          *birthday = dateAsUnix(*birthdayInput);
+
+          if (*birthday == -1) {
+               error = true;
+          }
+
+          if (error) {
+               //todo: error message
+               system("cls");
+               cout<<"Invalid Date Format!";
+          }
+     } while (error);
 
 
+     do {
+          cout<<"Enter child's gender (male or female): ";
+          getline(cin, *genderInput);
+          *genderInput.ToLower(*genderInput);
+
+          if ()
+
+     } while (*genderInput != "male" && *genderInput!= "female");
 
 
      *usersFile >> *birthday;
@@ -488,9 +598,17 @@ void newChild() {
 
      //delete tempChild();
 }
-void viewChild(){
 
+void viewChild(vector<Child> children){
+     sortChildren(children);
+
+     for (int i=0; i<children.size(); i++) {
+          Child tempChild = children.at(i);
+          //todo: formating of names by length
+          cout<<tempChild.getName()<<"\t\t\t\t\t"<<tempChild.getNicenessRating()<<"\n";
+     }
 }
+
 void assignGift(){
 
 }
@@ -747,21 +865,13 @@ void menuAdmin(){
      delete error;
 }
 
-
-
-/*todo
-classes for users and children
-
-*/
-
-
 //main function
 int main(){
 
      setupConsole();
 
 
-     //welcome();
+
 
      //cout<<getYearsSince(985323600);
 
@@ -770,20 +880,26 @@ int main(){
 
      string *username = new string;
      string *password = new string;
+     int *error = new int(0);
 
-     cout<<"Enter username: ";
-     cin>>*username;
-     cout<<"Enter password: ";
-     cin>>*password;
+     do
+     {
+          error = 0;
+          cout<<"Enter username: ";
+          cin>>*username;
+          cout<<"Enter password: ";
+          cin>>*password;
 
-
-     *permission = login(username, password);
-
-     while(*permission == 0) {
-               cout << "Error! The Passwod Entered is Incorect. Please Check Your Password or Contact your Administrator";
           *permission = login(username, password);
-     }
 
+          while(*permission == 0) {
+               cout << "Error! The Passwod Entered is Incorect. Please Check Your Password or Contact your Administrator";
+               *error = 46;
+               _getch();
+               system("cls");
+               //*permission = login(username, password);
+          }
+     } while(error == 46);
 
      vector<User> users;
      vector<Child> children;

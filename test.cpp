@@ -943,30 +943,45 @@ hash) x # of users
 }*/
 
 
-int dateAsUnix() {
+int dateAsUnix(string * dateString) {
 
-
-     string dateString = "2001/03/23";
-
-     time_t rawtime;
+     time_t rawTime, currentTime;
      struct tm * timeinfo;
-     int year, month, day;
+     struct tm * timeinfoCurrent;
+     int *year, *month, *day;
 
-     string yearString = dateString.substr(0,4);
+     cout<<"hi";
 
-     year = stoi(yearString);
-     cout << year;
-     cout<< yearString;
-
-     /*
-     time ( &rawtime );
-     timeinfo = localtime ( &rawtime );
-     timeinfo->tm_year = year - 1900;
-     timeinfo->tm_mon = month - 1;
-     timeinfo->tm_mday = day;
-*/
+     string *yearString = new string(dateString->substr(0,4));
+     string *monthString = new string(dateString->substr(5, 2));
+     string *dayString = new string(dateString->substr(8, 2));
 
 
+     *year = stoi(*yearString);
+     *month = stoi(*monthString);
+     *day = stoi(*dayString);
+
+     //find the current year for error trapping
+     time(&currentTime);
+     int *currentYear = localtime(&currentTime)->tm_year + 1900;
+
+
+     if (*year<1970 || *year>*currentYear) {
+          //returns error code, since date it invalid
+          return -1;
+     } else {
+          time ( &rawTime );
+          timeinfo = localtime ( &rawTime );
+          timeinfo->tm_year = year - 1900;
+          timeinfo->tm_mon = month - 1;
+          timeinfo->tm_mday = day;
+          timeinfo->tm_sec = 0;
+          timeinfo->tm_min = 0;
+          timeinfo->tm_hour = 12;
+
+          //returns -1 if failed, otherwise unix time
+          return mktime(timeinfo);
+     }
 }
 
 int main()
@@ -994,7 +1009,7 @@ int main()
 
      //cout<<getYearsSince(985323600);
 
-     cout<<dateAsUnix();
+     cout<<dateAsUnix("2001/03/23");
 
      //welcome();
 
@@ -1010,6 +1025,6 @@ int main()
      //while (true)
      //cout<<clicked(100, 150, 200, 250)<<"\n"<<mouseInput().x<<" "<<mouseInput().y<<"\n";
 
-     _getch();
-     return EXIT_SUCCESS;
+     //_getch();
+     //return EXIT_SUCCESS;
 }
