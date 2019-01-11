@@ -250,13 +250,13 @@ void setupConsole() {
 
 }
 
-void error(int errorCode) {
+void errorHandler(int errorCode) {
      cout << "Error Code " << errorCode << "Please Contact an Administrator to Address this Issue."<< endl;
      _getch();
      system("cls");
 }
 
-int loadFiles(vector<User> users, vector<Child> children, int toys[10][2]) {
+int loadFiles(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS][2]) {
 
      //load all users
      ifstream *usersFile = new ifstream;
@@ -269,6 +269,8 @@ int loadFiles(vector<User> users, vector<Child> children, int toys[10][2]) {
      int *toyAssigned = new int;
      int *numberOfToysMade = new int;
 
+     cout<<"hi";
+
      //open user file
      if (usersFile->is_open()) {
           *usersFile>> *numberOfUsers;
@@ -280,11 +282,12 @@ int loadFiles(vector<User> users, vector<Child> children, int toys[10][2]) {
                *usersFile >> *toyAssigned;
                *usersFile >> *numberOfToysMade;
 
-               //User tempUser(name, hireDate, toyAssigned, numberOfToysMade);
+cout<<"hillo";
+               User tempUser(name, hireDate, toyAssigned, numberOfToysMade);
 
-               //users.push_back(tempUser);
+               users.push_back(tempUser);
 
-               //delete tempUser();
+
 
           }
 
@@ -318,11 +321,11 @@ int loadFiles(vector<User> users, vector<Child> children, int toys[10][2]) {
                *usersFile >> *homeAddress;
                *usersFile >> *numberOfSiblings;
 
-               //Child tempChild(name, birthday, gender, homeAddress, numberOfSiblings);
+               Child tempChild(name, birthday, gender, homeAddress, numberOfSiblings);
 
-               //children.push_back(tempChild);
+               children.push_back(tempChild);
 
-               //delete tempChild();
+
           }
           childrensFile->close();
      }
@@ -343,8 +346,8 @@ int loadFiles(vector<User> users, vector<Child> children, int toys[10][2]) {
                *toysFile >> *needed;
                *toysFile >> *made;
 
-               toys[i][0]=*needed;
-               toys[i][1]=*made;
+               (*toys)[i][0]=*needed;
+               (*toys)[i][1]=*made;
           }
           toysFile->close();
      }
@@ -394,25 +397,30 @@ int dateAsUnix(string * dateString) {
 void sortChildren(vector<Child> children) {
 
      int i(0), j(0), temp(0);
-
+     cout<<"hi"<<children.size();
     for (i = 1; i < children.size(); i++)
     {
+
         j = i;
 
         while (j >= 0 && children.at(j).getName() < children.at(j - 1).getName())
         {
-             children.swap(j, j-1);
+             Child tempChild = children.at(j);
+             children.at(j) = children.at(j-1);
+             children.at(j-1) = tempChild;
+
              j--;
         }
     }
 }
 
+/*
 double selectionSort(int array[])
 {
    int i(0), j(0), temp(0);
    int min(100), pos(0);
 
-   auto start = std::chrono::high_resolution_clock::now();
+
 
    for (i = 0; i < SIZE - 1; i++)
    {
@@ -432,12 +440,9 @@ double selectionSort(int array[])
        array[pos] = temp;
    }
 
-   auto finish = std::chrono::high_resolution_clock::now();
 
-   std::chrono::duration<double> elapsed = finish - start;
-
-   return elapsed.count();
-}
+   return 0;
+}*/
 
 
 
@@ -467,7 +472,7 @@ permission level
 
 
 //core functions
-int login(string *username, string *password) {
+int loginHandler(string *username, string *password) {
 
      ifstream *loginFile = new ifstream;
      loginFile->open("login.txt");
@@ -537,60 +542,74 @@ void newChild() {
      getline(cin, *name);
 
 
-     bool *error = new bool;
+     int *error = new (nothrow) int(0);
 
      do {
-          cout<<"Enter Child's birthday (YYYY/MM/DD): "
-          getline(cin, *birthdayInput)
+          cout<<"Enter Child's birthday (YYYY/MM/DD): ";
+          getline(cin, *birthdayInput);
 
-          *error = false;
+          *error = 0;
 
-          if (*birthdayInput.length()!=10) {
-               *error = true;
+          if (birthdayInput->length()!=10) {
+               *error = 46;
           }
              else {
                for (int i = 0; i<10; i++) {
                     if (i==4 || i== 7) {
-                         if (birthdayInput.at(i)!='/') {
-                              *error = true;
+                         if (birthdayInput->at(i)!='/') {
+                              *error = 46;
                          }
                     } else {
-                         if (!isdigit(birthdayInput.at(i))) {
-                              *error = true;
+                         if (!isdigit(birthdayInput->at(i))) {
+                              *error = 46;
                          }
                     }
                }
           }
 
 
-          *birthday = dateAsUnix(*birthdayInput);
+          *birthday = dateAsUnix(birthdayInput);
 
           if (*birthday == -1) {
-               error = true;
+               *error = 46;
           }
 
-          if (error) {
+          if (*error == 46) {
                //todo: error message
                system("cls");
                cout<<"Invalid Date Format!";
           }
-     } while (error);
+     } while (*error == 46);
 
 
      do {
           cout<<"Enter child's gender (male or female): ";
           getline(cin, *genderInput);
-          *genderInput.ToLower(*genderInput);
-
-          if ()
-
-     } while (*genderInput != "male" && *genderInput!= "female");
 
 
-     *usersFile >> *birthday;
+          //*genderInput.ToLower(*genderInput);
+
+          for (int i = 0; i < genderInput->length(); i++) {
+               genderInput->at(i)=tolower(genderInput->at(i));
+          }
+
+
+
+          if (*genderInput != "male" && *genderInput != "female")
+          {
+               *error = 46;
+               cout << "Error! The Gender you Inputted Does Not Exist. Please Enter a Real Gender of Male or Female. ";
+               _getch();
+               system("cls");
+          }
+
+     } while (*error == 46);
+
+
+     /**usersFile >> *birthday;
      *usersFile >> *gender;
      *usersFile >> *homeAddress;
-     *usersFile >> *numberOfSiblings;
+     *usersFile >> *numberOfSiblings;*/
 
      //Child tempChild(name, birthday, gender, homeAddress, numberOfSiblings);
 
@@ -600,6 +619,8 @@ void newChild() {
 }
 
 void viewChild(vector<Child> children){
+     //cout<<"hi";
+
      sortChildren(children);
 
      for (int i=0; i<children.size(); i++) {
@@ -645,7 +666,7 @@ void modeJanuary(){
 void resetDefault(){
 
 }
-void menuElf(){
+void menuElf(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS][2]){
 
      int *selectionelf = new (nothrow) int(0);
      int *error = new (nothrow) int (0);
@@ -681,10 +702,10 @@ do {
           newChild();
           break;
      case 2:
-          viewChild();
+          viewChild(children);
           break;
      case 3:
-          viewChild();
+          viewChild(children);
           break;
      case 4:
           changePassword();
@@ -697,7 +718,7 @@ do {
      delete error;
 
 }
-void menuSanta(){
+void menuSanta(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS][2]){
 
      int *selectionsanta = new (nothrow) int(0);
      int *error = new (nothrow) int (0);
@@ -735,10 +756,10 @@ void menuSanta(){
           newChild();
           break;
      case 2:
-          viewChild();
+          viewChild(children);
           break;
      case 3:
-          viewChild();
+          viewChild(children);
           break;
      case 4:
           assignGift();
@@ -765,7 +786,7 @@ void menuSanta(){
      delete error;
 
 }
-void menuMrsClaus(){
+void menuMrsClaus(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS][2]){
 
      int *selectionmrsclaus = new (nothrow) int(0);
      int *error = new (nothrow) int (0);
@@ -812,7 +833,7 @@ void menuMrsClaus(){
      delete selectionmrsclaus;
      delete error;
 }
-void menuAdmin(){
+void menuAdmin(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS][2]){
      /*reset to default
      january mode*/
      int *selectionadmin = new (nothrow) int(0);
@@ -844,13 +865,13 @@ void menuAdmin(){
      switch(*selectionadmin)
      {
      case 1:
-          menuElf();
+          menuElf(users, children, toys);
           break;
      case 2:
-          menuSanta();
+          menuSanta(users, children, toys);
           break;
      case 3:
-          menuMrsClaus();
+          menuMrsClaus(users, children, toys);
           break;
      case 4:
           modeJanuary();
@@ -864,18 +885,8 @@ void menuAdmin(){
      delete selectionadmin;
      delete error;
 }
-
-//main function
-int main(){
-
-     setupConsole();
-
-
-
-
-     //cout<<getYearsSince(985323600);
-
-     //handle login
+//Login Function
+int login(){
      int *permission = new int;
 
      string *username = new string;
@@ -884,13 +895,28 @@ int main(){
 
      do
      {
-          error = 0;
-          cout<<"Enter username: ";
-          cin>>*username;
-          cout<<"Enter password: ";
+          *error = 0;
+
+          cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+          cout << "\t\t\t" << " _____                   ____             _____         ____________  _____    _____" << endl;
+          cout << "\t\t\t" << "|\\    \\              ____\\_  \\__     _____\\    \\_      /            \\|\\    \\   \\    \\" << endl;
+          cout << "\t\t\t" << " \\\\    \\            /     /     \\   /     /|     |    |\\___/\\  \\\\___/|\\\\    \\   |    |" << endl;
+          cout << "\t\t\t" << "  \\\\    \\          /     /\\      | /     / /____/|     \\|____\\  \\___|/ \\\\    \\  |    |" << endl;
+          cout << "\t\t\t" << "   \\|    | ______ |     |  |     ||     | |_____|/           |  |       \\|    \\ |    |" << endl;
+          cout << "\t\t\t" << "    |    |/      \\|     |  |     ||     | |_________    __  /   / __     |     \\|    |" << endl;
+          cout << "\t\t\t" << "    /            ||     | /     /||\\     \\|\\        \\  /  \\/   /_/  |   /     /\\      \\" << endl;
+          cout << "\t\t\t" << "   /_____/\\_____/||\\     \\_____/ || \\_____\\|    |\\__/||____________/|  /_____/ /______/|" << endl;
+          cout << "\t\t\t" << "  |      | |    ||| \\_____\\   | / | |     /____/| | |||           | / |      | |     | |" << endl;
+          cout << "\t\t\t" << "  |______|/|____|/ \\ |    |___|/   \\|_____|     |\\|_|/|___________|/  |______|/|_____|/" << endl;
+          cout << "\t\t\t" << "                    \\|____|               |____/                                         " << endl;
+          cout<< "\t\t\t\t\t\t" << "Enter username: ";
+          getline(cin, *username);
+          fflush(stdin);
+          cout<< "\t\t\t\t\t\t" << "Enter password: ";
           cin>>*password;
 
-          *permission = login(username, password);
+
+          *permission = loginHandler(username, password);
 
           while(*permission == 0) {
                cout << "Error! The Passwod Entered is Incorect. Please Check Your Password or Contact your Administrator";
@@ -899,20 +925,33 @@ int main(){
                system("cls");
                //*permission = login(username, password);
           }
-     } while(error == 46);
+     } while(*error == 46);
+
+     return *permission;
+}
+
+//main function
+int main(){
+
+     //setupConsole();
+     system("color F4");
+     //changeColor(12, 15);
+
+     int *permission = new (nothrow) int(0);
+
+
+     //cout<<getYearsSince(985323600);
+
+     //handle login
+     *permission = login();
 
      vector<User> users;
      vector<Child> children;
-     //int *toys = new int(10)[2];
 
-     int **toys;
-     toys = new int*[NUMOFTOYS]; // dynamic array (size 5) of pointers to int`
 
-     for (int i = 0; i < NUMOFTOYS; ++i) {
-       toys[i] = new int[2];
-       // each i-th pointer is now pointing to dynamic array (size 10)
-       // of actual int values
-     }
+     int toyArray [NUMOFTOYS][2];
+     int (*toys)[NUMOFTOYS][2] = &toyArray;
+
 
 
      loadFiles(users, children, toys);
@@ -925,26 +964,26 @@ int main(){
      3: mr. claus
      4: admin
 */
+     //system("cls");
      switch(*permission) {
           case 1:
-               elfMenu();
+               menuElf(users, children, toys);
                break;
           case 2:
-               mrsClausMenu();
+               menuMrsClaus(users, children, toys);
                break;
           case 3:
-               mrClausMenu();
+               menuSanta(users, children, toys);
                break;
           case 4:
-               admin();
+               menuAdmin(users, children, toys);
                break;
           default:
-               error();
+               errorHandler(1567892435);
                break;
      }
 
 
-     changeColor(5, 6);
 
 
 
