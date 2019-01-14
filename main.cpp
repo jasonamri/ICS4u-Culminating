@@ -123,7 +123,7 @@ public:
 class Child {
 private:
      //name of child
-     string *name = new (nothrow) string("");
+     string *name = new (nothrow) string;
      //birthday
      int *birthday = new (nothrow) int(0);
      //age
@@ -143,17 +143,21 @@ private:
 
 public:
      //constructor
-     Child (string *nameInput, int *birthdayInput, bool *genderInput, string *homeAddressInput, int *numberOfSiblingsInput) {
+     Child (string nameInput, int birthdayInput, string homeAddressInput, int numberOfSiblingsInput) {
 
-          *name = *nameInput;
-          *birthday = *birthdayInput;
-          *age = getYearsSince(birthday);
-          *gender = *genderInput;
-          *homeAddress = *homeAddressInput;
-          *numberOfSiblings = *numberOfSiblingsInput;
-          *cookieRating = 0;
-          *nicenessRating = 50;
-          *toyAssigned = 0;
+          //bool *genderInput = new bool (0);
+
+          *name = nameInput;
+
+          *birthday = birthdayInput;
+          //*age = getYearsSince(birthday);
+          //*gender = *genderInput;
+          *homeAddress = homeAddressInput;
+          *numberOfSiblings = numberOfSiblingsInput;
+          //*cookieRating = 0;
+          //*nicenessRating = 50;
+          //*toyAssigned = 0;
+          cout<<*numberOfSiblings;
      }
 
      int getAssignedToy(){
@@ -172,6 +176,7 @@ public:
           return *nicenessRating;
      }
      string getName(){
+          //cout << "hello";
           return *name;
      }
      void setNicenessRating(int *nicenessInput) {
@@ -256,82 +261,100 @@ void errorHandler(int errorCode) {
      system("cls");
 }
 
-int loadFiles(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS][2]) {
+int loadFiles(vector<User> users, vector<Child> &children, int (*toys)[NUMOFTOYS][2]) {
 
      //load all users
-     ifstream *usersFile = new ifstream;
-     usersFile->open("users.txt");
+     ifstream usersFile;
+     usersFile.open("users.txt");
 
-     int *numberOfUsers = new int;
-
-     string *name = new string;
+     /*string *name = new string("");
      int *hireDate = new int;
      int *toyAssigned = new int;
      int *numberOfToysMade = new int;
 
-     cout<<"hi";
 
      //open user file
-     if (usersFile->is_open()) {
-          *usersFile>> *numberOfUsers;
+     if (usersFile.is_open()) {
 
-          for (int i = 0; i < *numberOfUsers; i++) {
+          while (!usersFile.eof() )
+          {
+               usersFile>> *name;
+               usersFile>> *hireDate;
+               usersFile>> *toyAssigned;
+               usersFile>> *numberOfToysMade;
 
-               *usersFile >> *name;
-               *usersFile >> *hireDate;
-               *usersFile >> *toyAssigned;
-               *usersFile >> *numberOfToysMade;
+               //cout<<"hillo"<<"i:"<<*name<<":i"<<*hireDate<<":i"<<*toyAssigned<<":i"<<*numberOfToysMade<<":i"<<"\n";
 
-cout<<"hillo";
-               User tempUser(name, hireDate, toyAssigned, numberOfToysMade);
-
-               users.push_back(tempUser);
-
-
+               //users.emplace_back(name, hireDate, toyAssigned, numberOfToysMade);
 
           }
-
-          usersFile->close();
-
+          usersFile.close();
      }
+
+     delete hireDate;
+     delete numberOfToysMade;
      //end load all users
 
 
+*/
+
      //load children
-     ifstream *childrensFile = new ifstream;
-     childrensFile->open("children.txt");
+     ifstream childrensFile;
+     childrensFile.open("children.txt");
 
-     int *numberOfChildren = new int;
-
-     //string *name = new string();
+     string *nameChild = new string("");
      int *birthday = new int;
-     bool *gender = new bool;
+     int *gender = new int;
      string *homeAddress = new string;
      int *numberOfSiblings = new int;
+     int *cookieRating = new int;
+     int *nicenessRating = new int;
+     int *toyAssignedChild = new int;
 
-     //open user file
-     if (childrensFile->is_open()) {
-          *childrensFile>> *numberOfChildren;
-
-          for (int i = 0; i < *numberOfChildren; i++) {
-
-               *usersFile >> *name;
-               *usersFile >> *birthday;
-               *usersFile >> *gender;
-               *usersFile >> *homeAddress;
-               *usersFile >> *numberOfSiblings;
-
-               Child tempChild(name, birthday, gender, homeAddress, numberOfSiblings);
-
-               children.push_back(tempChild);
+     //children.reserve(100);
 
 
+     //Child tempChild;
+
+     //open children's file
+     if (childrensFile.is_open()) {
+
+          while (!childrensFile.eof())
+          {
+
+               getline(childrensFile, *nameChild, '$');
+               childrensFile >> *birthday;
+               childrensFile >> *gender;
+               getline(childrensFile, *homeAddress, '$');
+               childrensFile >> *numberOfSiblings;
+               childrensFile >> *cookieRating;
+               childrensFile >> *nicenessRating;
+               childrensFile >> *toyAssignedChild;
+
+               children.push_back(Child(*nameChild, *birthday, *homeAddress, *numberOfSiblings));
+cout<<children.at(0).getSiblingNumber();
+               cout<<"hies";
           }
-          childrensFile->close();
+          childrensFile.close();
+          cout<<"hello";
      }
-     //end load children
 
-     //load toys
+
+     string output = children.back().getName();
+
+cout<<"hi"<<output;
+cout<<"hi";
+
+     /*delete name;
+     delete birthday;
+     delete gender;
+     delete homeAddress;
+     delete numberOfSiblings;
+     delete toyAssigned;
+     //end load children*/
+
+
+     /*//load toys
      ifstream *toysFile = new ifstream;
      toysFile->open("toys.txt");
 
@@ -351,10 +374,12 @@ cout<<"hillo";
           }
           toysFile->close();
      }
-     //end load toys
+     //end load toys*/
 
 }
 
+//returns unix time on success
+//returns -1 on fail
 int dateAsUnix(string * dateString) {
 
      time_t rawTime, currentTime;
@@ -444,6 +469,98 @@ double selectionSort(int array[])
    return 0;
 }*/
 
+void addChild(vector<Child> children){
+     //CHILD child;
+     string *childName = new (nothrow) string;
+     int *childBirthday = new (nothrow) int(0);
+     string *childBirthdayInput = new (nothrow) string;
+     int *childAge = new (nothrow) int(0);
+     string *childGender = new (nothrow) string;
+     string *childHomeAddress = new (nothrow) string;
+     int *childNumberOfSiblings = new (nothrow) int(0);
+     int *childToyAssigned = new (nothrow) int(0);
+     bool *error = new (nothrow) bool;
+
+     cout << "Please Input the Name of the Child...> ";
+     getline(cin, *childName);
+
+     do {
+          cout << "Please Input the Birthday of the Child(YYYY/MM/DD)...> ";
+          getline(cin, *childBirthdayInput);
+
+          *error = false;
+
+          if (childBirthdayInput->length()!=10) {
+               *error = true;
+          }
+             else {
+               for (int i = 0; i<10; i++) {
+                    if (i==4 || i== 7) {
+                         if (childBirthdayInput->at(i)!='/') {
+                              *error = true;
+                         }
+                    } else {
+                         if (!isdigit(childBirthdayInput->at(i))) {
+                              *error = true;
+                         }
+                    }
+               }
+          }
+
+
+          *childBirthday = dateAsUnix(childBirthdayInput);
+
+          if (*childBirthday == -1) {
+               *error = true;
+          }
+
+          if (*error == true) {
+               //todo: error message
+               system("cls");
+               cout<<"Invalid Date Format!";
+          }
+     } while (*error == true);
+
+     cout << "Please Input the Age of the Child";
+     cin >> *childAge;
+
+     do
+     {
+          cout << "Please Input the Gender of the Child(M/F)";
+          getline(cin, *childGender);
+
+          for (int i = 0; i < childGender->length(); i++) {
+               childGender->at(i)=toupper(childGender->at(i));
+          }
+
+
+
+          if (*childGender != "M" && *childGender != "F")
+          {
+               *error = true;
+               cout << "Error! The Gender you Inputted Does Not Exist. Please Enter a Real Gender of Male or Female. ";
+               _getch();
+               system("cls");
+          }
+
+     } while (*error == true);
+
+     cout << "Please Input the Home Address of the Child";
+     getline(cin, *childHomeAddress);
+     cout << "Please Input the Number of Siblings the Child has";
+     cin >> *childNumberOfSiblings;
+     do {
+          *error = false;
+          cout << "Please Input the Toy that was Assigned to the Child(1-10)";
+          cin >> *childToyAssigned;
+          if (*childToyAssigned < 1 || *childToyAssigned > 10)
+          {
+               error = *true;
+               system("cls");
+               _getch();
+          }
+     } while(*error == true);
+}
 
 
 
@@ -528,7 +645,7 @@ void workshopMenu() {
 
 
 //elf
-void newChild() {
+/*void newChild() {
      string *name = new string;
      int *birthday = new int;
      bool *gender = new bool;
@@ -542,26 +659,26 @@ void newChild() {
      getline(cin, *name);
 
 
-     int *error = new (nothrow) int(0);
+     bool *error = new (nothrow) bool;
 
      do {
           cout<<"Enter Child's birthday (YYYY/MM/DD): ";
           getline(cin, *birthdayInput);
 
-          *error = 0;
+          *error = false;
 
           if (birthdayInput->length()!=10) {
-               *error = 46;
+               *error = true;
           }
              else {
                for (int i = 0; i<10; i++) {
                     if (i==4 || i== 7) {
                          if (birthdayInput->at(i)!='/') {
-                              *error = 46;
+                              *error = true;
                          }
                     } else {
                          if (!isdigit(birthdayInput->at(i))) {
-                              *error = 46;
+                              *error = true;
                          }
                     }
                }
@@ -571,15 +688,15 @@ void newChild() {
           *birthday = dateAsUnix(birthdayInput);
 
           if (*birthday == -1) {
-               *error = 46;
+               *error = true;
           }
 
-          if (*error == 46) {
+          if (*error == true) {
                //todo: error message
                system("cls");
                cout<<"Invalid Date Format!";
           }
-     } while (*error == 46);
+     } while (*error == true);
 
 
      do {
@@ -597,13 +714,13 @@ void newChild() {
 
           if (*genderInput != "male" && *genderInput != "female")
           {
-               *error = 46;
+               *error = true;
                cout << "Error! The Gender you Inputted Does Not Exist. Please Enter a Real Gender of Male or Female. ";
                _getch();
                system("cls");
           }
 
-     } while (*error == 46);
+     } while (*error == true);
 
 
      /**usersFile >> *birthday;
@@ -616,7 +733,7 @@ void newChild() {
      //children.push_back(tempChild);
 
      //delete tempChild();
-}
+//}
 
 void viewChild(vector<Child> children){
      //cout<<"hi";
@@ -648,7 +765,17 @@ void changePassword(){
 void workshopProgress(){
 
 }
-void addElf(){
+void addElf(vector<User> users){
+     string *elfName = new (nothrow) string;
+     int *elfHireDate = new (nothrow) int(0);
+     int *elfYearsSinceHire = new (nothrow) int(0);
+     int *elfToyAssigned = new (nothrow) int(0);
+     int *elfToysMade = new (nothrow) int(0);
+     int *elfProgress = new (nothrow) int(0);
+
+     cout << "Please Input the Name of the Elf...> ";
+     getline(cin, *elfName);
+
 
 }
 void fireElf(){
@@ -669,10 +796,10 @@ void resetDefault(){
 void menuElf(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS][2]){
 
      int *selectionelf = new (nothrow) int(0);
-     int *error = new (nothrow) int (0);
+     bool *error = new (nothrow) bool;
 
 do {
-          *error = 0;
+          *error = false;
           cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
           cout << "\t\t\t" << "  _______  ___       _______      ___      ___   _______  _____  ___   ____  ____  " << endl;
           cout << "\t\t\t" << " /\"     \"||\"  |     /\"     \"|    |\"  \\    /\"  | /\"     \"|(\\\"   \\|\"  \\ (\"  _||_ \" | " << endl;
@@ -690,16 +817,16 @@ do {
           if (*selectionelf < 1 || *selectionelf > 4)
           {
                cout << "Error! Your Selection Must be Within 1 & 4" << endl;
-               *error = 46; //Error Code 46 means Error = true
+               *error = true; //Error Code 46 means Error = true
                _getch();
                system("cls");
           }
-     } while(*error == 46);
+     } while(*error == true);
 
      switch(*selectionelf)
      {
      case 1:
-          newChild();
+          addChild(children);
           break;
      case 2:
           viewChild(children);
@@ -721,10 +848,10 @@ do {
 void menuSanta(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS][2]){
 
      int *selectionsanta = new (nothrow) int(0);
-     int *error = new (nothrow) int (0);
+     bool *error = new (nothrow) bool;
 
      do {
-          *error = 0;
+          *error = false;
           cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
           cout << "\t\t\t" << " ,---.                    ,--.              ,--.   ,--." << endl;
           cout << "\t\t\t" << "\'   .-\'  ,--,--.,--,--, ,-\'  \'-. ,--,--.    |   `.\'   | ,---. ,--,--, ,--.,--." << endl;
@@ -745,15 +872,15 @@ void menuSanta(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS
           if (*selectionsanta < 1 || *selectionsanta > 9)
           {
                cout << "Error! Your Selection Must be Within 1 & 9" << endl;
-               *error = 46; //Error Code 46 means Error = true
+               *error = true; //Error Code 46 means Error = true
                _getch();
                system("cls");
           }
-     } while(*error == 46);
+     } while(*error == true);
      switch(*selectionsanta)
      {
      case 1:
-          newChild();
+          addChild(children);
           break;
      case 2:
           viewChild(children);
@@ -789,9 +916,9 @@ void menuSanta(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS
 void menuMrsClaus(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS][2]){
 
      int *selectionmrsclaus = new (nothrow) int(0);
-     int *error = new (nothrow) int (0);
+     bool *error = new (nothrow) bool;
      do {
-          *error = 0;
+          *error = false;
           cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
           cout << "\t\t\t\t" << "  __  __               _____ _                   __  __                  " << endl;
           cout << "\t\t\t\t" << " |  \\/  |             / ____| |                 |  \\/  |                 " << endl;
@@ -808,15 +935,15 @@ void menuMrsClaus(vector<User> users, vector<Child> children, int (*toys)[NUMOFT
           if (*selectionmrsclaus < 1 || *selectionmrsclaus > 4)
           {
                cout << "Error! Your Selection Must be Within 1 & 4" << endl;
-               *error = 46; //Error Code 46 means Error = true
+               *error = true; //Error Code 46 means Error = true
                _getch();
                system("cls");
           }
-     } while(*error == 46);
+     } while(*error == true);
      switch(*selectionmrsclaus)
      {
      case 1:
-          addElf();
+          addElf(users);
           break;
      case 2:
           fireElf();
@@ -837,9 +964,9 @@ void menuAdmin(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS
      /*reset to default
      january mode*/
      int *selectionadmin = new (nothrow) int(0);
-     int *error = new (nothrow) int (0);
+     bool *error = new (nothrow) bool;
      do {
-          *error = 0;
+          *error = false;
           cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
 
           cout << "\t\t\t\t" << "    ___       __          _     " << endl;
@@ -857,11 +984,11 @@ void menuAdmin(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS
           if (*selectionadmin < 1 || *selectionadmin > 5)
           {
                cout << "Error! Your Selection Must be Within 1 & 5" << endl;
-               *error = 46; //Error Code 46 means Error = true
+               *error = true; //Error Code 46 means Error = true
                _getch();
                system("cls");
           }
-     } while(*error == 46);
+     } while(*error == true);
      switch(*selectionadmin)
      {
      case 1:
@@ -891,11 +1018,11 @@ int login(){
 
      string *username = new string;
      string *password = new string;
-     int *error = new int(0);
+     bool *error = new (nothrow) bool;
 
      do
      {
-          *error = 0;
+          *error = false;
 
           cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
           cout << "\t\t\t" << " _____                   ____             _____         ____________  _____    _____" << endl;
@@ -920,16 +1047,1240 @@ int login(){
 
           while(*permission == 0) {
                cout << "Error! The Passwod Entered is Incorect. Please Check Your Password or Contact your Administrator";
-               *error = 46;
+               *error = true;
                _getch();
                system("cls");
                //*permission = login(username, password);
           }
-     } while(*error == 46);
+     } while(*error == true);
 
      return *permission;
 }
+void welcome(){
+     double start(0);
+     system("color F9");
 
+
+     delay(50);
+     system("color F1");
+     system("cls");
+
+
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+
+
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+
+
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+
+
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+
+
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+
+
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+
+
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+
+
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+
+
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+
+
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+
+
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     cout << "                             ()                             " << "\t\t" << "                     ()                             " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     cout << "                             \\/                             " << "\t\t" << "                     \\/                            " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     cout << "                            \\\\//                            " << "\t\t" << "                    \\\\//                          " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     cout << "                           <<  >>                           " << "\t\t" << "                   <<  >>                           " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     cout << "                        ()  //\\\\  ()                        " << "\t\t" << "                ()  //\\\\  ()                      " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     cout << "              ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()             " << "\t\t" << "      ()`\"\"\"`   \\/   //   \\/   `\"\"\"\"`()    " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;;
+     cout << "                /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\                " << "\t\t" << "        /\'--\'/ \\\\// \\\\// \\\\// \\\'--\'\\    " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     cout << "                 //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\                 " << "\t\t" << "         //\"\"/\\\\\"\"//\\\"\"//\\\"\"//\\\"\"\\\\" << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     cout << "                  .--\\\\/--\\//--\\//--\\//--.                  " << "\t\t" << "          .--\\\\/--\\//--\\//--\\//--.             " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     cout << "                     ////\\\\\\//\\\\///\\\\\\\\                     " << "\t\t" << "             ////\\\\\\//\\\\///\\\\\\\\            " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     cout << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()          " << "\t\t" << "                 ()-= >>\\\\< <\\\\> >\\\\<< =-()           " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     cout << "                    \\\\\\\\///\\\\//\\\\\\////                     " << "\t\t" << "             \\\\\\\\///\\\\//\\\\\\////            " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     cout << "                 \'--/\\\\--//\\--//\\--/\\\\--\'                " << "\t\t" << "        \'--/\\\\--//\\--//\\--/\\\\--\'        " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     cout << "                \\\\__\\\\/__\\//__\\//__\\\\/__//               " << "\t\t" << "       \\\\__\\\\/__\\//__\\//__\\\\/__//       " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     cout << "                    \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./              " << "\t\t" << "      \\.--.\\ //\\\\ //\\\\ //\\\\ /.--./      " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     cout << "            ()._____   /\\   \\\\   /\\   _____.()           " << "\t\t" << "   ()._____   /\\   \\\\   /\\   _____.()       " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     cout << "                       ()  \\\\//  ()                      " << "\t\t" << "              ()  \\\\//  ()                    " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     cout << "                          <<  >>                         " << "\t\t" << "                 <<  >>                         " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     cout << "                           //\\\\                          " << "\t\t" << "                  //\\\\                        " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     cout << "                            /\\                           " << "\t\t" << "                   /\\                          " << endl;
+     delay(50);
+     system("color F9");
+     system("cls");
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "                            ()                           " << "\t\t" << "                   ()                           " << endl;
+     delay(50);
+     system("color F1");
+     system("cls");
+
+     cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+     cout << "\t\t\t" << "  ______           _          ____  _____     ____  _____   _________        _" << endl;
+     cout << "\t\t\t" << ".' ____ \\         / \\        |_   \\|_   _|   |_   \\|_   _| |  _   _  |      / \\" << endl;
+     cout << "\t\t\t" << "| (___ \\_|       / _ \\         |   \\ | |       |   \\ | |   |_/ | | \\_|     / _ \\" << endl;
+     cout << "\t\t\t" << " _.____`.       / ___ \\        | |\\ \\| |       | |\\ \\| |       | |        / ___ \\" << endl;
+     cout << "\t\t\t" << "| \\____) | _  _/ /   \\ \\_  _  _| |_\\   |_  _  _| |_\\   |_  _  _| |_  _  _/ /   \\ \\_" << endl;
+     cout << "\t\t\t" << " \\______.'(_)|____| |____|(_)|_____|\\____|(_)|_____|\\____|(_)|_____|(_)|____| |____|" << endl;
+
+     delay(50);
+     system("color F9");
+     delay(50);
+     system("color F1");
+     delay(50);
+     system("color F9");
+     delay(50);
+     system("color F1");
+     delay(50);
+     system("color F9");
+     delay(50);
+     system("color F1");
+     delay(50);
+     system("color F9");
+     delay(50);
+     system("color F1");
+     delay(50);
+     system("color F9");
+     delay(50);
+     system("color F1");
+     delay(50);
+     system("color F9");
+     delay(50);
+     system("color F1");
+     delay(50);
+     system("color F9");
+     delay(50);
+     system("color F1");
+     delay(50);
+     system("color F9");
+     delay(50);
+     system("color F1");
+     delay(50);
+     system("color F9");
+     delay(50);
+     system("color F1");
+     delay(50);
+     system("color F9");
+     delay(50);
+     system("color F1");
+     delay(50);
+     system("color F9");
+     delay(50);
+     system("color F1");
+     delay(50);
+     system("color F9");
+     delay(50);
+     system("color F1");
+}
 //main function
 int main(){
 
@@ -948,6 +2299,7 @@ int main(){
      vector<User> users;
      vector<Child> children;
 
+     children.reserve(100);
 
      int toyArray [NUMOFTOYS][2];
      int (*toys)[NUMOFTOYS][2] = &toyArray;
@@ -955,6 +2307,7 @@ int main(){
 
 
      loadFiles(users, children, toys);
+
 
 
 /*
