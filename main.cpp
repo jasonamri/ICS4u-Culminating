@@ -30,6 +30,9 @@ using namespace std;
 
 #define NUMOFTOYS 10
 
+#define MAXCHILDREN 100
+#define MAXUSERS 50
+
 
 map<int, string> toys = {
     { 1, "Teddy bear" },
@@ -133,7 +136,7 @@ private:
      //home address
      string *homeAddress = new (nothrow) string("");
      //number of siblings
-     int *numberOfSiblings = new (nothrow) int(0);
+     int *numberOfSiblings = new int(0);
      //cookie rating
      int *cookieRating = new (nothrow) int(0);
      //niceness rating
@@ -143,21 +146,23 @@ private:
 
 public:
      //constructor
-     Child (string nameInput, int birthdayInput, string homeAddressInput, int numberOfSiblingsInput) {
+     Child (string *nameInput, int *birthdayInput, bool *genderInput, string *homeAddressInput, int *numberOfSiblingsInput) {
 
-          //bool *genderInput = new bool (0);
+          *gender = *genderInput;
 
-          *name = nameInput;
+          *name = *nameInput;
 
-          *birthday = birthdayInput;
+          *birthday = *birthdayInput;
           //*age = getYearsSince(birthday);
           //*gender = *genderInput;
-          *homeAddress = homeAddressInput;
-          *numberOfSiblings = numberOfSiblingsInput;
+          *homeAddress = *homeAddressInput;
+          *numberOfSiblings = *numberOfSiblingsInput;
+
+          //cout<<
           //*cookieRating = 0;
           //*nicenessRating = 50;
           //*toyAssigned = 0;
-          cout<<*numberOfSiblings;
+          //cout<<*numberOfSiblings;
      }
 
      int getAssignedToy(){
@@ -261,44 +266,142 @@ void errorHandler(int errorCode) {
      system("cls");
 }
 
-int loadFiles(vector<User> users, vector<Child> &children, int (*toys)[NUMOFTOYS][2]) {
+
+//returns -1 if users file not found
+//returns -2 if children file not found
+//returns -3 if toys file not found
+//returns 1 if successful
+int loadFiles(User * users, int *numberOfUsers, Child * children, int *numberOfChildren, int (*toys)[NUMOFTOYS][2]) {
 
      //load all users
-     ifstream usersFile;
-     usersFile.open("users.txt");
+     ifstream fin;
+     fin.open("users.txt");
 
-     /*string *name = new string("");
+     if(fin.fail()) {
+          // throw error here
+          return -1;
+
+    }
+
+     string *name = new string("");
      int *hireDate = new int;
      int *toyAssigned = new int;
      int *numberOfToysMade = new int;
 
 
      //open user file
-     if (usersFile.is_open()) {
+     if (fin.is_open()) {
 
-          while (!usersFile.eof() )
+          while (!fin.eof() )
           {
-               usersFile>> *name;
-               usersFile>> *hireDate;
-               usersFile>> *toyAssigned;
-               usersFile>> *numberOfToysMade;
+               fin>> *name;
+               fin>> *hireDate;
+               fin>> *toyAssigned;
+               fin>> *numberOfToysMade;
+
+
+
+               users[*numberOfUsers] = new(nothrow) User(name, hireDate, toyAssigned, numberOfToysMade);
+
+               *numberOfUsers++;
 
                //cout<<"hillo"<<"i:"<<*name<<":i"<<*hireDate<<":i"<<*toyAssigned<<":i"<<*numberOfToysMade<<":i"<<"\n";
 
                //users.emplace_back(name, hireDate, toyAssigned, numberOfToysMade);
 
           }
-          usersFile.close();
+          fin.close();
      }
 
      delete hireDate;
+     delete name;
+     delete toyAssigned;
      delete numberOfToysMade;
      //end load all users
 
 
-*/
 
-     //load children
+
+
+     //children.reserve(100);
+
+    fin.open("children.txt");
+
+    if(fin.fail()) {
+          // throw error here
+          return -2;
+    }
+
+    string *nameChild = new (nothrow) string;
+    string *homeAddress = new (nothrow) string;
+    int *birthday = new (nothrow) int;
+    int *gender = new (nothrow) int;
+    bool *genderBool = new (nothrow) bool;
+    int *numberOfSiblings = new (nothrow) int;
+    int *cookieRating = new (nothrow) int;
+    int *nicenessRating = new (nothrow) int;
+    int *toyAssignedChild = new (nothrow) int;
+
+    if (fin.is_open()) {
+
+         while (!fin.eof() )
+         {
+               getline(fin, *nameChild, '$');
+               //cout<<nameChild<<"\n";
+               fin >> *birthday;
+               //cout<<birthday<<"\n";
+               fin >> *gender;
+               //cout<<gender<<"\n";
+               getline(fin, *homeAddress, '$');
+               //cout<<homeAddress<<"\n";
+               fin >> *numberOfSiblings;
+               //cout<<numberOfSiblings<<"\n";
+               fin >> *cookieRating;
+               //cout<<cookieRating<<"\n";
+               fin >> *nicenessRating;
+               //cout<<nicenessRating<<"\n";
+               fin >> *toyAssignedChild;
+               //cout<<toyAssignedChild<<"\n";
+
+               *genderBool = (bool)(*gender);
+
+               children[*numberOfChildren] = new (nothrow) Child(nameChild,birthday,genderBool,homeAddress,numberOfSiblings);
+
+               *numberOfChildren++;
+
+              //cout<<"hillo"<<"i:"<<*name<<":i"<<*hireDate<<":i"<<*toyAssigned<<":i"<<*numberOfToysMade<<":i"<<"\n";
+
+              //users.emplace_back(name, hireDate, toyAssigned, numberOfToysMade);
+
+         }
+         fin.close();
+    }
+
+
+    delete nameChild;
+    delete birthday;
+    delete gender;
+    delete homeAddress;
+    delete numberOfSiblings;
+    delete toyAssignedChild;
+    delete nicenessRating;
+    delete cookieRating;
+
+
+
+        //children.push_back();
+        //cout<<children.back().getSiblingNumber();
+
+       // for (int i = 0; i<children.size(); i++) {
+     //   cout<<"\nnumber"<<i<<"hi"<<children.at(i).getSiblingNumber();
+        //}
+
+
+    //fin.close();
+
+
+
+     /*//load children
      ifstream childrensFile;
      childrensFile.open("children.txt");
 
@@ -311,7 +414,10 @@ int loadFiles(vector<User> users, vector<Child> &children, int (*toys)[NUMOFTOYS
      int *nicenessRating = new int;
      int *toyAssignedChild = new int;
 
-     //children.reserve(100);
+
+children.reserve(100);
+
+
 
 
      //Child tempChild;
@@ -331,50 +437,75 @@ int loadFiles(vector<User> users, vector<Child> &children, int (*toys)[NUMOFTOYS
                childrensFile >> *nicenessRating;
                childrensFile >> *toyAssignedChild;
 
-               children.push_back(Child(*nameChild, *birthday, *homeAddress, *numberOfSiblings));
-cout<<children.at(0).getSiblingNumber();
+               string _name = *nameChild;
+               cout<<_name;
+
+               int _birthday = *birthday;
+               cout<<_birthday;
+
+               string _homeAddress = *homeAddress;
+               cout<<_homeAddress;
+
+               int _numberOfSiblings = *numberOfSiblings;
+               cout<<_numberOfSiblings;
+
+               children.push_back(Child(_name, _birthday, _homeAddress, 69));
+               cout<<children.back().getSiblingNumber();
                cout<<"hies";
+
+               for (int i = 0; i<children.size(); i++) {
+                    cout<<"\nnumber"<<i<<"hi"<<children.at(i).getSiblingNumber();
+               }
+
           }
           childrensFile.close();
           cout<<"hello";
      }
 
+     //children.erase (children.begin()+3);
 
-     string output = children.back().getName();
+*/
+     //for (int i = 0; i<children.size(); i++) {
+     //     cout<<"\nnumber"<<i<<"hi"<<children.at(i).getSiblingNumber();
+     //}
 
-cout<<"hi"<<output;
-cout<<"hi";
 
-     /*delete name;
-     delete birthday;
-     delete gender;
-     delete homeAddress;
-     delete numberOfSiblings;
-     delete toyAssigned;
+
+
+
+//cout<<"hi"<<output;
+//cout<<"hi";
+
+
      //end load children*/
 
 
-     /*//load toys
-     ifstream *toysFile = new ifstream;
-     toysFile->open("toys.txt");
+     //load toys
+     fin.open("toys.txt");
 
      int *needed = new int;
      int *made = new int;
 
+     if(fin.fail()) {
+          // throw error here
+          return -3;
+    }
 
-     if (toysFile->is_open()) {
+     if (fin.is_open()) {
 
           for (int i = 0; i < NUMOFTOYS; i++) {
 
-               *toysFile >> *needed;
-               *toysFile >> *made;
+               fin >> *needed;
+               fin >> *made;
 
                (*toys)[i][0]=*needed;
                (*toys)[i][1]=*made;
           }
-          toysFile->close();
+          fin.close();
      }
-     //end load toys*/
+     //end load toys
+
+     return 1;
 
 }
 
@@ -419,20 +550,20 @@ int dateAsUnix(string * dateString) {
      }
 }
 
-void sortChildren(vector<Child> children) {
+void sortChildren(Child * children, int * numberOfChildren) {
 
      int i(0), j(0), temp(0);
-     cout<<"hi"<<children.size();
-    for (i = 1; i < children.size(); i++)
+     //cout<<"hi"<<children.size();
+    for (i = 1; i < *numberOfChildren; i++)
     {
 
         j = i;
 
-        while (j >= 0 && children.at(j).getName() < children.at(j - 1).getName())
+        while (j >= 0 && children[j].getName() < children[j - 1].getName())
         {
-             Child tempChild = children.at(j);
-             children.at(j) = children.at(j-1);
-             children.at(j-1) = tempChild;
+             Child tempChild = children[j];
+             children[j] = children[j-1];
+             children[j-1] = tempChild;
 
              j--;
         }
@@ -469,7 +600,7 @@ double selectionSort(int array[])
    return 0;
 }*/
 
-void addChild(vector<Child> children){
+void addChild(Child * children, int * numberOfChildren){
      //CHILD child;
      string *childName = new (nothrow) string;
      int *childBirthday = new (nothrow) int(0);
@@ -555,7 +686,7 @@ void addChild(vector<Child> children){
           cin >> *childToyAssigned;
           if (*childToyAssigned < 1 || *childToyAssigned > 10)
           {
-               error = *true;
+               *error = true;
                system("cls");
                _getch();
           }
@@ -735,13 +866,13 @@ void workshopMenu() {
      //delete tempChild();
 //}
 
-void viewChild(vector<Child> children){
+void viewChild(Child *children, int *numberOfChildren){
      //cout<<"hi";
 
-     sortChildren(children);
+     sortChildren(children, numberOfChildren);
 
-     for (int i=0; i<children.size(); i++) {
-          Child tempChild = children.at(i);
+     for (int i=0; i<*numberOfChildren; i++) {
+          Child tempChild = children[i];
           //todo: formating of names by length
           cout<<tempChild.getName()<<"\t\t\t\t\t"<<tempChild.getNicenessRating()<<"\n";
      }
@@ -756,8 +887,47 @@ void assignAllGifts(){
 void purgeChildren(){
 
 }
-void elfToy(){
+void elfToy(User *users){
+     int *elfToyAssign = new (nothrow) int(0);
+     int *selection= new (nothrow) int (0);
+     bool *error = new (nothrow) bool;
 
+     do {
+          *error = false;
+          system("cls");
+          cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+          cout << "\t\t\t\t" << " .----------------.  .----------------.  .----------------.  .----------------. " << endl;
+          cout << "\t\t\t\t" << "| .--------------. || .--------------. || .--------------. || .--------------. |" << endl;
+          cout << "\t\t\t\t" << "| |  _________   | || |     ____     | || |  ____  ____  | || |    _______   | |" << endl;
+          cout << "\t\t\t\t" << "| | |  _   _  |  | || |   .\'    `.   | || | |_  _||_  _| | || |   /  ___  |  | |" << endl;
+          cout << "\t\t\t\t" << "| | |_/ | | \\_|  | || |  /  .--.  \\  | || |   \\ \\  / /   | || |  |  (__ \\_|  | |" << endl;
+          cout << "\t\t\t\t" << "| |     | |      | || |  | |    | |  | || |    \ \/ /    | || |   \'.___`-.   | |" << endl;
+          cout << "\t\t\t\t" << "| |    _| |_     | || |  \\  `--\'  /  | || |    _|  |_    | || |  |`\\____) |  | |" << endl;
+          cout << "\t\t\t\t" << "| |   |_____|    | || |   `.____.\'   | || |   |______|   | || |  |_______.\'  | |" << endl;
+          cout << "\t\t\t\t" << "| |              | || |              | || |              | || |              | |" << endl;
+          cout << "\t\t\t\t" << "| \'--------------\' || \'--------------\' || \'--------------\' || \'--------------\' |" << endl;
+          cout << "\t\t\t\t" << " \'----------------\'  \'----------------\'  \'----------------\'  \'----------------\'" << endl;
+          cout << "\t\t\t\t" << "\t\t\t\t" << "1. Teddy bear" << endl;
+          cout << "\t\t\t\t" << "\t\t\t\t" << "2. Toy blocks" <<endl;
+          cout << "\t\t\t\t" << "\t\t\t\t" << "3. Rubber ducky" <<endl;
+          cout << "\t\t\t\t" << "\t\t\t\t" << "4. Firetruck" <<endl;
+          cout << "\t\t\t\t" << "\t\t\t\t" << "5. Hockey stick" <<endl;
+          cout << "\t\t\t\t" << "\t\t\t\t" << "6. Book" <<endl;
+          cout << "\t\t\t\t" << "\t\t\t\t" << "7. Toy car" <<endl;
+          cout << "\t\t\t\t" << "\t\t\t\t" << "8. Slime" <<endl;
+          cout << "\t\t\t\t" << "\t\t\t\t" << "9. Lego" <<endl;
+          cout << "\t\t\t\t" << "\t\t\t\t" << "10. Pyjamas" <<endl;
+          cout << "\t\t\t\t" << "\t\t\t\t" << ">";
+          cin >> *selection;
+          if (*selectionadmin < 1 || *selectionadmin > 10)
+          {
+               cout << "Error! Your Selection Must be Within 1 & 10" << endl;
+               *error = true; //Error Code 46 means Error = true
+               _getch();
+               system("cls");
+          }
+     } while(*error == true);
+     *elfToyAssign = *selection;
 }
 void changePassword(){
 
@@ -765,16 +935,85 @@ void changePassword(){
 void workshopProgress(){
 
 }
-void addElf(vector<User> users){
+void addElf(User * users){
+     fstream userLogin;
+     userlogin.open("login.txt", ios::app);
      string *elfName = new (nothrow) string;
-     int *elfHireDate = new (nothrow) int(0);
+     string *elfUsername = new (nothrow) string;
+     string *elfHireDate = new (nothrow) string;
      int *elfYearsSinceHire = new (nothrow) int(0);
-     int *elfToyAssigned = new (nothrow) int(0);
-     int *elfToysMade = new (nothrow) int(0);
      int *elfProgress = new (nothrow) int(0);
+     bool *error = new (nothrow) bool;
+     int *elfPassword = new (nothrow) bool;
+
+     char letter;
 
      cout << "Please Input the Name of the Elf...> ";
      getline(cin, *elfName);
+     do {
+          cout << "Please Input the Hire Date of the Elf(YYYY/MM/DD)...> ";
+          getline(cin, *elfHireDate);
+
+          *error = false;
+
+          if (elfHireDate->length()!=10) {
+               *error = true;
+          }
+             else {
+               for (int i = 0; i<10; i++) {
+                    if (i==4 || i== 7) {
+                         if (elfHireDate->at(i)!='/') {
+                              *error = true;
+                         }
+                    } else {
+                         if (!isdigit(elfHireDate->at(i))) {
+                              *error = true;
+                         }
+                    }
+               }
+          }
+
+
+          *elfYearsSinceHire = dateAsUnix(elfHireDate);
+
+          if (*elfYearsSinceHire == -1) {
+               *error = true;
+          }
+
+          if (*error == true) {
+               //todo: error message
+               system("cls");
+               cout<<"Invalid Date Format!";
+          }
+     } while (*error == true);
+
+     cout << "Please Input the Elfs Username...> ";
+     getline(cin, *elfUsername);
+
+     if (userLogin.is_open()) {
+          while (!userLogin.eof())
+          loginFile >> *numberOfUsers;
+
+          for (int i = 0; i<*numberOfUsers; i++) {
+
+
+               }
+          }
+
+
+          loginFile->close();
+
+     cout << "Please Input the Elfs Password...> ";
+
+     while ((letter=_getch()) != '\n')
+     {
+         *elfPassword->push_back(letter);
+         _putch('*');
+     }
+
+     userLogin << elfUsername << endl;
+     userLogin << generateHash(*elfUsername, *elfPassword) << endl;
+     userLogin << "1" << endl;
 
 
 }
@@ -793,13 +1032,14 @@ void modeJanuary(){
 void resetDefault(){
 
 }
-void menuElf(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS][2]){
+void menuElf(User * users, int *numberOfUsers, Child * children, int * numberOfChildren, int (*toys)[NUMOFTOYS][2]){
 
      int *selectionelf = new (nothrow) int(0);
      bool *error = new (nothrow) bool;
 
-do {
+     do {
           *error = false;
+          system("cls");
           cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
           cout << "\t\t\t" << "  _______  ___       _______      ___      ___   _______  _____  ___   ____  ____  " << endl;
           cout << "\t\t\t" << " /\"     \"||\"  |     /\"     \"|    |\"  \\    /\"  | /\"     \"|(\\\"   \\|\"  \\ (\"  _||_ \" | " << endl;
@@ -826,13 +1066,13 @@ do {
      switch(*selectionelf)
      {
      case 1:
-          addChild(children);
+          addChild(children, numberOfChildren);
           break;
      case 2:
-          viewChild(children);
+          viewChild(children, numberOfChildren);
           break;
      case 3:
-          viewChild(children);
+          viewChild(children, numberOfChildren);
           break;
      case 4:
           changePassword();
@@ -845,13 +1085,14 @@ do {
      delete error;
 
 }
-void menuSanta(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS][2]){
+void menuSanta(User * users, int *numberOfUsers, Child * children, int * numberOfChildren, int (*toys)[NUMOFTOYS][2]){
 
      int *selectionsanta = new (nothrow) int(0);
      bool *error = new (nothrow) bool;
 
      do {
           *error = false;
+          system("cls");
           cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
           cout << "\t\t\t" << " ,---.                    ,--.              ,--.   ,--." << endl;
           cout << "\t\t\t" << "\'   .-\'  ,--,--.,--,--, ,-\'  \'-. ,--,--.    |   `.\'   | ,---. ,--,--, ,--.,--." << endl;
@@ -880,13 +1121,13 @@ void menuSanta(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS
      switch(*selectionsanta)
      {
      case 1:
-          addChild(children);
+          addChild(children, numberOfChildren);
           break;
      case 2:
-          viewChild(children);
+          viewChild(children, numberOfChildren);
           break;
      case 3:
-          viewChild(children);
+          viewChild(children, numberOfChildren);
           break;
      case 4:
           assignGift();
@@ -898,7 +1139,7 @@ void menuSanta(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS
           purgeChildren();
           break;
      case 7:
-          elfToy();
+          elfToy(users);
           break;
      case 8:
           workshopProgress();
@@ -913,12 +1154,13 @@ void menuSanta(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS
      delete error;
 
 }
-void menuMrsClaus(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS][2]){
+void menuMrsClaus(User * users, int *numberOfUsers, Child * children, int * numberOfChildren, int (*toys)[NUMOFTOYS][2]){
 
      int *selectionmrsclaus = new (nothrow) int(0);
      bool *error = new (nothrow) bool;
      do {
           *error = false;
+          system("cls");
           cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
           cout << "\t\t\t\t" << "  __  __               _____ _                   __  __                  " << endl;
           cout << "\t\t\t\t" << " |  \\/  |             / ____| |                 |  \\/  |                 " << endl;
@@ -960,13 +1202,14 @@ void menuMrsClaus(vector<User> users, vector<Child> children, int (*toys)[NUMOFT
      delete selectionmrsclaus;
      delete error;
 }
-void menuAdmin(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS][2]){
+void menuAdmin(User * users, int *numberOfUsers, Child * children, int * numberOfChildren, int (*toys)[NUMOFTOYS][2]){
      /*reset to default
      january mode*/
      int *selectionadmin = new (nothrow) int(0);
      bool *error = new (nothrow) bool;
      do {
           *error = false;
+          system("cls");
           cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
 
           cout << "\t\t\t\t" << "    ___       __          _     " << endl;
@@ -992,13 +1235,13 @@ void menuAdmin(vector<User> users, vector<Child> children, int (*toys)[NUMOFTOYS
      switch(*selectionadmin)
      {
      case 1:
-          menuElf(users, children, toys);
+          menuElf(users, numberOfUsers, children, numberOfChildren, toys);
           break;
      case 2:
-          menuSanta(users, children, toys);
+          menuSanta(users, numberOfUsers, children, numberOfChildren, toys);
           break;
      case 3:
-          menuMrsClaus(users, children, toys);
+          menuMrsClaus(users, numberOfUsers, children, numberOfChildren, toys);
           break;
      case 4:
           modeJanuary();
@@ -2296,17 +2539,124 @@ int main(){
      //handle login
      *permission = login();
 
-     vector<User> users;
-     vector<Child> children;
+     //vector<User> users;
+     //vector<Child> children;
 
-     children.reserve(100);
+     User *users[MAXUSERS];
+     Child *children[MAXCHILDREN];
+
+
+     //children.reserve(100);
 
      int toyArray [NUMOFTOYS][2];
      int (*toys)[NUMOFTOYS][2] = &toyArray;
 
 
+     int *numberOfUsers = new (nothrow) int(0);
+     int *numberOfChildren = new (nothrow) int(0);
 
-     loadFiles(users, children, toys);
+     //load users
+     ifstream fin;
+     fin.open("users.txt");
+
+     if(fin.fail()) {
+          // throw error here
+          cout<<"Error loading user files? Is it in the right spot?";
+
+     }
+
+     string *name = new string("");
+     int *hireDate = new int;
+     int *toyAssigned = new int;
+     int *numberOfToysMade = new int;
+
+
+     //open user file
+     if (fin.is_open()) {
+
+          while (!fin.eof() )
+          {
+               fin>> *name;
+               fin>> *hireDate;
+               fin>> *toyAssigned;
+               fin>> *numberOfToysMade;
+
+               users[*numberOfUsers] = new(nothrow) User(name, hireDate, toyAssigned, numberOfToysMade);
+
+               *numberOfUsers = (*numberOfUsers + 1);
+
+          }
+          fin.close();
+     }
+
+     delete hireDate;
+     delete name;
+     delete toyAssigned;
+     delete numberOfToysMade;
+
+
+     //load children
+     fin.open("children.txt");
+
+    if(fin.fail()) {
+          // throw error here
+          cout<<"Error loading children files? Is it in the right spot?";
+    }
+
+    string *nameChild = new (nothrow) string;
+    string *homeAddress = new (nothrow) string;
+    int *birthday = new (nothrow) int;
+    int *gender = new (nothrow) int;
+    bool *genderBool = new (nothrow) bool;
+    int *numberOfSiblings = new (nothrow) int;
+    int *cookieRating = new (nothrow) int;
+    int *nicenessRating = new (nothrow) int;
+    int *toyAssignedChild = new (nothrow) int;
+
+    if (fin.is_open()) {
+
+         while (!fin.eof() )
+         {
+               getline(fin, *nameChild, '$');
+               //cout<<nameChild<<"\n";
+               fin >> *birthday;
+               //cout<<birthday<<"\n";
+               fin >> *gender;
+               //cout<<gender<<"\n";
+               getline(fin, *homeAddress, '$');
+               //cout<<homeAddress<<"\n";
+               fin >> *numberOfSiblings;
+               //cout<<numberOfSiblings<<"\n";
+               fin >> *cookieRating;
+               //cout<<cookieRating<<"\n";
+               fin >> *nicenessRating;
+               //cout<<nicenessRating<<"\n";
+               fin >> *toyAssignedChild;
+               //cout<<toyAssignedChild<<"\n";
+
+               *genderBool = (bool)(*gender);
+
+               children[*numberOfChildren] = new (nothrow) Child(nameChild,birthday,genderBool,homeAddress,numberOfSiblings);
+
+               *numberOfChildren = (*numberOfChildren + 1);
+
+              //cout<<"hillo"<<"i:"<<*name<<":i"<<*hireDate<<":i"<<*toyAssigned<<":i"<<*numberOfToysMade<<":i"<<"\n";
+
+              //users.emplace_back(name, hireDate, toyAssigned, numberOfToysMade);
+
+         }
+         fin.close();
+    }
+
+
+    delete nameChild;
+    delete birthday;
+    delete gender;
+    delete homeAddress;
+    delete numberOfSiblings;
+    delete toyAssignedChild;
+    delete nicenessRating;
+    delete cookieRating;
 
 
 
