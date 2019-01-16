@@ -1,6 +1,9 @@
 //2018-12-13 - 2019-01-21
-//Culminating Task
+//Culminating Task - SANNTA
+//Jason Amri & Jacob Van G
 
+
+//****LIBRARIES****
 #include <stdlib.h>
 #include <iostream>
 #include <conio.h>
@@ -24,6 +27,8 @@
 #include <vector>
 using namespace std;
 
+
+//****CONSTANTS****
 #define SCREENSIZEWIDTH 1080
 #define SCREENSIZEHEIGHT 720
 
@@ -48,27 +53,14 @@ map<int, string> toysMap = {
     { 10, "Pyjamas" }
 };
 
-void delay(long unsigned int millis){
-	//start timer
-	clock_t start = clock();
-	//check is time has elasped
-	while ((start + ((float)(millis / 1000) * CLOCKS_PER_SEC)) > (unsigned)clock());
-}
 
-/*
-jason:admin
-jacob:password
-santa:santa
-mrsclaus:cookies
-elf1:hohoho
-*/
 
-int getYearsSince(int *dateInUnixTime) {
 
-     int secondsSinceEpoch = (int)time(0);
-     return (secondsSinceEpoch - *dateInUnixTime)/(60*60*24*365.25);
 
-}
+//****CLASSES****
+
+//prototype for get year since function. this is the only function called by a class, so it must be declared above the classes
+int getYearsSince(int *dateInUnixTime);
 
 class User {
 private:
@@ -129,7 +121,6 @@ public:
 
 };
 
-
 class Child {
 private:
      //name of child
@@ -137,7 +128,7 @@ private:
      //birthday
      int *birthday = new (nothrow) int(0);
      //age
-     int *age = new (nothrow) int(0);
+     //dont save calculatable value: int *age = new (nothrow) int(0);
      //gender
      bool *gender = new (nothrow) bool;
      //home address
@@ -158,16 +149,20 @@ public:
           *gender = *genderInput;
 
           *name = *nameInput;
+          name->erase(std::remove(name->begin(), name->end(), '\n'), name->end());
+
 
           *birthday = *birthdayInput;
-          //todo//*age = getYearsSince(birthday);
+          //dont save calculatable value: *age = getYearsSince(birthday);
           *homeAddress = *homeAddressInput;
+          homeAddress->erase(std::remove(homeAddress->begin(), homeAddress->end(), '\n'), homeAddress->end());
           *numberOfSiblings = *numberOfSiblingsInput;
           *cookieRating = 0;
           *nicenessRating = 50;
           *toyAssigned = 0;
 
      }
+
 
      int getAssignedToy(){
           return *toyAssigned;
@@ -185,8 +180,40 @@ public:
           return *nicenessRating;
      }
      string getName(){
-          //cout << "hello";
           return *name;
+     }
+     int getBirthdayUnix() {
+          return *birthday;
+     }
+     string getBirthdayReadable() {
+          time_t t = *birthday;
+          struct tm *tm = localtime(&t);
+          char date[20];
+          strftime(date, sizeof(date), "%b %d %Y", tm);
+          return (string)date;
+     }
+     int getAge() {
+          return getYearsSince(birthday);
+     }
+     bool getGenderBool() {
+          return *gender;
+     }
+     string getGenderReadable() {
+          if (*gender == true) {
+               return "Male";
+          } else {
+               return "Female";
+          }
+     }
+
+     void setCookieRating(int *_cookieRating) {
+          if (*_cookieRating > 15) {
+               *_cookieRating = 15;
+          } else if (*_cookieRating < 1) {
+               *_cookieRating = 1;
+          }
+
+          *cookieRating = *_cookieRating;
      }
      void setNicenessRating(int *nicenessInput) {
           if (*nicenessInput > 100) {
@@ -197,6 +224,31 @@ public:
 
           *nicenessRating = *nicenessInput;
      }
+     void setHomeAddress(string *_homeAddress) {
+          *homeAddress = *_homeAddress;
+     }
+     void setNumberOfSiblings(int *_numberOfSiblings) {
+          if (*_numberOfSiblings < 0) {
+               *_numberOfSiblings = 0;
+          }
+
+          *numberOfSiblings = *_numberOfSiblings;
+     }
+
+     void setAssignedToy(int *_toyAssigned) {
+          if (*_toyAssigned > 10) {
+               *_toyAssigned = 10;
+          } else if (*_toyAssigned < 0) {
+               *_toyAssigned = 0;
+          }
+
+          *toyAssigned = *_toyAssigned;
+     }
+
+     void forceEnd() {
+          *name = "zzz";
+     }
+
      void show() {
           cout<<"\nName: "<<*name<<"\nBirthday"<<*birthday;
      }
@@ -205,7 +257,7 @@ public:
      ~Child(){
           delete name;
           delete birthday;
-          delete age;
+          //delete age;
           delete gender;
           delete homeAddress;
           delete numberOfSiblings;
@@ -219,7 +271,8 @@ public:
 
 
 
-//general utility funtions
+//****UTILITY FUNCTIONS****
+
 size_t generateHash(string *username, string *password) {
      hash<string> hash_fn;
      return  hash_fn(*username+*password);
@@ -250,6 +303,18 @@ bool clicked(int xMin, int yMin, int xMax, int yMax) {
      *mouse = mouseInput();
      return (mouse->x>xMin && mouse->x<xMax && mouse->y>yMin && mouse->y<yMax && cursorDown());
 
+}
+
+void delay(long unsigned int millis){
+	//start timer
+	clock_t start = clock();
+	//check is time has elasped
+	while ((start + ((float)(millis / 1000) * CLOCKS_PER_SEC)) > (unsigned)clock());
+}
+
+int getYearsSince(int *dateInUnixTime) {
+     int secondsSinceEpoch = (int)time(0);
+     return (secondsSinceEpoch - *dateInUnixTime)/(60*60*24*365.25);
 }
 
 void setScreenPosAndSize () {
@@ -330,7 +395,41 @@ int dateAsUnix(string * dateString) {
 
 void sortChildren(Child * children[MAXCHILDREN], int * numberOfChildren) {
 
-     int i(0), j(0), temp(0);
+
+
+     int i(0), j(0);
+     int pos(0);
+
+    string min;
+
+    for (i = 0; i < *numberOfChildren - 1; i++)
+    {
+         cout<<"newloop"<<i<<"\n";
+        min = children[i]->getName(); // the first element is Min value
+        pos = i;
+
+
+        for (j = i + 1; j < *numberOfChildren; j++) // finding smaller value that Min
+        {
+
+              cout<<"compare"<<j<<"\n";
+             if (children[j]->getName() < min)
+             {
+                   cout<<"yes"<<j<<"\n";
+                 min = children[j]->getName();
+                 pos = j;
+             }
+        }
+        //not used
+        //Child temp = *children[i]; // swap selected element and Min value
+        //*children[i] = *children[pos];
+        //*children[pos] = temp;
+        swap(children[i], children[pos]);
+    }
+
+
+
+/*     int i(0), j(0), temp(0);
      //cout<<"hi"<<children.size();
     for (i = 1; i < *numberOfChildren; i++)
     {
@@ -368,7 +467,7 @@ void sortChildren(Child * children[MAXCHILDREN], int * numberOfChildren) {
 
              j--;
         }
-    }
+   }*/
 }
 
 /*
@@ -408,12 +507,19 @@ void sortUsers() {
 
 
 
-/*
+/* NOTES
 login.txt
 #of users
 (username
 hash
 permissionLevel) x # of users
+
+
+jason:admin
+jacob:password
+santa:santa
+mrsclaus:cookies
+elf1:hohoho
 
 
 permission level
@@ -425,9 +531,10 @@ permission level
 */
 
 
-//core functions
+//****CORE FUNCTIONS****
 
 //arguments: pointer to username inputted as string, pointer to password entered as string
+//returns permission level on success, 0 on fail
 int loginHandler(string *username, string *password) {
 
      ifstream *loginFile = new ifstream;
@@ -478,8 +585,6 @@ int loginHandler(string *username, string *password) {
 
 
 }
-
-
 
 
 
@@ -557,9 +662,11 @@ int loadFiles(User * users[MAXUSERS], int *numberOfUsers, Child * children[MAXCH
 
          while (!fin.eof() )
          {
-               //getline(fin, *nameChild, '\n');
+               //fin.ignore(120,'\n');
+               //fin.seekg(1, ios::cur);
                getline(fin, *nameChild, '$');
-               //cout<<nameChild<<"\n";
+               //cout<<*nameChild<<nameChild->length()<<"\n";
+               //_getch();
                fin >> *birthday;
                //cout<<birthday<<"\n";
                fin >> *gender;
@@ -640,108 +747,7 @@ int loadFiles(User * users[MAXUSERS], int *numberOfUsers, Child * children[MAXCH
 
 
 
-
-
-
-//elf
-/*void newChild() {
-     string *name = new string;
-     int *birthday = new int;
-     bool *gender = new bool;
-     string *homeAddress = new string;
-     int *numberOfSiblings = new int;
-
-     string *birthdayInput = new string;
-     string *genderInput = new string;
-
-     cout<<"Enter Child's name: ";
-     getline(cin, *name);
-
-
-     bool *error = new (nothrow) bool;
-
-     do {
-          cout<<"Enter Child's birthday (YYYY/MM/DD): ";
-          getline(cin, *birthdayInput);
-
-          *error = false;
-
-          if (birthdayInput->length()!=10) {
-               *error = true;
-          }
-             else {
-               for (int i = 0; i<10; i++) {
-                    if (i==4 || i== 7) {
-                         if (birthdayInput->at(i)!='/') {
-                              *error = true;
-                         }
-                    } else {
-                         if (!isdigit(birthdayInput->at(i))) {
-                              *error = true;
-                         }
-                    }
-               }
-          }
-
-
-          *birthday = dateAsUnix(birthdayInput);
-
-          if (*birthday == -1) {
-               *error = true;
-          }
-
-          if (*error == true) {
-               //todo: error message
-               system("cls");
-               cout<<"Invalid Date Format!";
-          }
-     } while (*error == true);
-
-
-     do {
-          cout<<"Enter child's gender (male or female): ";
-          getline(cin, *genderInput);
-
-
-          //*genderInput.ToLower(*genderInput);
-
-          for (int i = 0; i < genderInput->length(); i++) {
-               genderInput->at(i)=tolower(genderInput->at(i));
-          }
-
-
-
-          if (*genderInput != "male" && *genderInput != "female")
-          {
-               *error = true;
-               cout << "Error! The Gender you Inputted Does Not Exist. Please Enter a Real Gender of Male or Female. ";
-               _getch();
-               system("cls");
-          }
-
-     } while (*error == true);
-
-
-     /**usersFile >> *birthday;
-     *usersFile >> *gender;
-     *usersFile >> *homeAddress;
-     *usersFile >> *numberOfSiblings;*/
-
-     //Child tempChild(name, birthday, gender, homeAddress, numberOfSiblings);
-
-     //children.push_back(tempChild);
-
-     //delete tempChild();
-//}
-
-void workshopMenu() {
-     //ascii art?
-
-
-}
-
-
-//arrow key handler
+//Purpose: arrow key handler
 //arguments: boolean indicating whether to wait for key press
 //returns: int 0-6 for arrow key direction or enter key
 //0: enter
@@ -801,31 +807,145 @@ int arrowKeys(bool wait) {
 }
 
 
+
+
+
+
+
 //callled by view child to edit detailed atributes
 void editChild(Child *children[MAXCHILDREN], int *index) {
 
-
+     //cout<<*index;
+     //_getch();
      system("cls");
 
+     int *selection = new (nothrow) int(0);
 
      /*todo: be able to change:
-     address
      siblings
      cookie rating
      niceness rating
      */
 
-     cout<<children[*index]->getName();
 
-     _getch();
+     int * numberOfSiblings = new (nothrow) int;
+     string * address = new (nothrow) string;
+     int * cookieRating = new (nothrow) int;
+     int * nicenessRating = new (nothrow) int;
+
+     /*
+     delete name;
+     delete birthday;
+     delete age;
+     delete gender;
+     delete homeAddress;
+     delete numberOfSiblings;
+     delete cookieRating;
+     delete nicenessRating;
+     delete toyAssigned;
+
+
+     */
+
+     //cout<<children[1]->getName();
+
+     //todo:error trap
+     cout<<"Selected Child Name: "<<children[*index]->getName()<<"\n";
+     cout<<"Birthday: "<<children[*index]->getBirthdayReadable()<<"\n";
+     cout<<"Age: "<<children[*index]->getAge()<<"\n";
+     cout<<"Gender: "<<children[*index]->getGenderReadable()<<"\n";
+     cout<<"Address: "<<children[*index]->getHomeAddress()<<"\n";
+     cout<<"# of siblings: "<<children[*index]->getSiblingNumber()<<"\n";
+     cout<<"Cookie Rating (1-15): \t\t"<<children[*index]->getCookieRating()<<"\n";
+     cout<<"Niceness Rating (0-100): \t"<<children[*index]->getNicenessRating()<<"\n";
+     cout<<"Assigned Toy: "<<toysMap.at(children[*index]->getAssignedToy())<<"\n\n";
+
+
+     cout<<"1. Edit address\n";
+     cout<<"2. Edit number of siblings\n";
+     cout<<"3. Edit cookie rating\n";
+     cout<<"4. Edit niceness rating\n";
+     cout<<"5. Exit\n";
+     cout<<"Make a selection -->";
+
+     cin>>*selection;
+
      system("cls");
+     switch(*selection) {
+          case 1:
+
+               cout<<"Enter new home address --> ";
+               fflush(stdin);
+               getline(cin, *address);
+               children[*index]->setHomeAddress(address);
+
+               cout<<"Successfully changed home address. Press any key to return.";
+               _getch();
+               break;
+          case 2:
+
+               cout<<"Enter new number of siblings --> ";
+               fflush(stdin);
+               cin>>*numberOfSiblings;
+
+               while(*numberOfSiblings < 0) {
+                    //todo: error trap
+               }
+
+               children[*index]->setNumberOfSiblings(numberOfSiblings);
+               cout<<"Successfully changed number of siblings. Press any key to return.";
+               _getch();
+               break;
+          case 3:
+
+               cout<<"Enter new cookie rating --> ";
+               fflush(stdin);
+               cin>> *cookieRating;
+
+               while (*cookieRating > 15 || *cookieRating < 1) {
+                    //todo errortrap
+               }
+
+               children[*index]->setCookieRating(cookieRating);
+               cout<<"Successfully changed cookie rating. Press any key to return.";
+               _getch();
+               break;
+          case 4:
+
+               cout<<"Enter new niceness rating --> ";
+               fflush(stdin);
+               cin>> *nicenessRating;
+
+               while(*cookieRating > 100 || *cookieRating < 0) {
+                    //todo errortrap
+               }
+
+               children[*index]->setNicenessRating(nicenessRating);
+               cout<<"Successfully changed niceness rating. Press any key to return.";
+               _getch();
+               break;
+     }
+
+
+     system("cls");
+
+     delete index;
+     delete nicenessRating;
+     delete cookieRating;
+     delete numberOfSiblings;
+     delete address;
 }
 
 void viewChild(Child *children[MAXCHILDREN], int *numberOfChildren){
 
+     sortChildren(children, numberOfChildren);
+
+
      int *input = new int(7);
      int *selection = new int (0);
      int *nicenessRating = new int;
+
+
 
      do {
 
@@ -835,13 +955,21 @@ void viewChild(Child *children[MAXCHILDREN], int *numberOfChildren){
                if (*selection == i) {
                     changeColor(15, 4);
                }
-               cout<<children[i]->getName()<<"\t\t\t\t\t\t"<<children[i]->getNicenessRating();
+               cout<<children[i]->getName()<<"\t\t\t\t\t\t"<<children[i]->getNicenessRating()<<"\n";
                if (*selection == i) {
                     changeColor(4, 15);
                }
           }
 
-          *nicenessRating = children[*selection]->getNicenessRating();
+          if (*selection == *numberOfChildren) {
+               changeColor(15, 4);
+          }
+          cout<<"Exit\n";
+          if (*selection == *numberOfChildren) {
+               changeColor(4, 15);
+          }
+
+
 
           *input = arrowKeys(true);
 
@@ -855,23 +983,30 @@ void viewChild(Child *children[MAXCHILDREN], int *numberOfChildren){
 
           switch (*input) {
                case 0:
-                    editChild(children, selection);
+                    if (*selection == *numberOfChildren) {
+                         *input = 6;
+                    } else {
+                         editChild(children, selection);
+                    }
                     break;
                case 1:
                     if (*selection>0) {*selection = *selection -1;}
                     break;
                case 2:
+                    *nicenessRating = children[*selection]->getNicenessRating();
                     *nicenessRating = *nicenessRating - 1;
                     children[*selection]->setNicenessRating(nicenessRating);
                     break;
                case 3:
+                    *nicenessRating = children[*selection]->getNicenessRating();
                     *nicenessRating = *nicenessRating + 1;
                     children[*selection]->setNicenessRating(nicenessRating);
                     break;
                case 4:
-                    if (*selection<*numberOfChildren-1) {*selection = *selection +1;}
+                    if (*selection<*numberOfChildren) {*selection = *selection +1;}
                     break;
           }
+
 
 
      } while (*input != 6);
@@ -886,7 +1021,6 @@ void viewChild(Child *children[MAXCHILDREN], int *numberOfChildren){
      system("cls");
 
 }
-
 
 void addChild(Child * children[MAXCHILDREN], int * numberOfChildren){
      //CHILD child;
@@ -1036,14 +1170,217 @@ void addChild(Child * children[MAXCHILDREN], int * numberOfChildren){
 
 }
 
+void assignGift(Child * children[MAXCHILDREN], int * numberOfChildren){
+     int *input = new int(7);
+     int *selection = new int (0);
+     int *toyAssigned = new int;
 
-void assignGift(){
+     do {
+
+          system("cls");
+
+          cout<<"Enter to auto assign, up/down to select child, left/right to change toy, esc to exit\n\n";
+
+          for (int i=0; i<*numberOfChildren; i++) {
+               //todo: formating of names by length
+               if (*selection == i) {
+                    changeColor(15, 4);
+               }
+               cout<<children[i]->getName()<<"\t\t\t\t\t\t"<<toysMap.at(children[i]->getAssignedToy())<<"\n";
+               if (*selection == i) {
+                    changeColor(4, 15);
+               }
+          }
+
+          if (*selection == *numberOfChildren) {
+               changeColor(15, 4);
+          }
+          cout<<"Exit\n";
+          if (*selection == *numberOfChildren) {
+               changeColor(4, 15);
+          }
+
+
+
+          *input = arrowKeys(true);
+
+          //0: enter
+          //1: up
+          //2: left
+          //3: right
+          //4: down
+          //5: tab
+          //6: esc
+
+          switch (*input) {
+               case 0:
+                    if (*selection == *numberOfChildren) {
+                         *input = 6;
+                    } else {
+                         *toyAssigned = rand() % 10 + 1;
+                         children[*selection]->setAssignedToy(toyAssigned);
+                         system("cls");
+                         cout<<"Successfully auto assigned toy, press any key to continue.";
+                         _getch();
+                    }
+                    break;
+               case 1:
+                    if (*selection>0) {*selection = *selection -1;}
+                    break;
+               case 2:
+                    *toyAssigned = children[*selection]->getAssignedToy();
+                    *toyAssigned = *toyAssigned - 1;
+                    children[*selection]->setAssignedToy(toyAssigned);
+                    break;
+               case 3:
+                    *toyAssigned = children[*selection]->getAssignedToy();
+                    *toyAssigned = *toyAssigned + 1;
+                    children[*selection]->setAssignedToy(toyAssigned);
+                    break;
+               case 4:
+                    if (*selection<*numberOfChildren) {*selection = *selection +1;}
+                    break;
+          }
+
+
+
+     } while (*input != 6);
+
+
+
+     delete selection;
+     delete input;
+     delete toyAssigned;
+
+
+     system("cls");
+}
+
+void assignAllGifts(Child * children[MAXCHILDREN], int * numberOfChildren){
+
+     int * selection = new (nothrow) int(0);
+     string * confirmation = new (nothrow) string;
+
+     system("cls");
+
+
+     cout<<"1. Auto assign gifts to all children\n";
+     cout<<"2. Auto assign gifts to unsigned children\n";
+     cout<<"3. Cancel\n";
+
+     //todo error trapping
+
+     cin>>*selection;
+
+
+     if (*selection == 1) {
+          do
+          {
+               system("cls");
+               cout << "Are you sure you want to reassign all children (Y or N) --> ";
+               fflush(stdin);
+               getline(cin, *confirmation);
+
+               for (int i = 0; i < confirmation->length(); i++) {
+                    confirmation->at(i)=toupper(confirmation->at(i));
+               }
+
+               if (*confirmation != "Y" && *confirmation != "N")
+               {
+
+                    cout << "Error! Invalid input. ";
+                    _getch();
+                    system("cls");
+               }
+
+          } while (*confirmation != "Y" && *confirmation != "N");
+
+          if (*confirmation == "Y") {
+
+               for (int i=0; i<*numberOfChildren; i++) {
+                    int * toyAssigned = new (nothrow) int (rand() % 10 + 1);
+                    children[i]->setAssignedToy(toyAssigned);
+                    delete toyAssigned;
+               }
+               system("cls");
+               cout<<"Done assigning toys. Press any key to return.";
+               _getch();
+          }
+     } else if (*selection == 2) {
+          for (int i=0; i<*numberOfChildren; i++) {
+               if (children[i]->getAssignedToy()==0) {
+                    int * toyAssigned = new (nothrow) int (rand() % 10 + 1);
+                    children[i]->setAssignedToy(toyAssigned);
+                    delete toyAssigned;
+               }
+          }
+          system("cls");
+          cout<<"Done assigning toys. Press any key to return.";
+          _getch();
+     }
+
+
+delete selection;
+delete confirmation;
+
 
 }
-void assignAllGifts(){
+
+void purgeChildren(Child * children[MAXCHILDREN], int * numberOfChildren){
+
+     string * confirmation = new (nothrow) string;
+     int * numberOfRemovedChildren = new (nothrow) int(0);
+
+     do
+     {
+          cout << "Are you sure you want to purge all children 18+ (Y or N) --> ";
+          fflush(stdin);
+          getline(cin, *confirmation);
+
+          for (int i = 0; i < confirmation->length(); i++) {
+               confirmation->at(i)=toupper(confirmation->at(i));
+          }
+
+          if (*confirmation != "Y" && *confirmation != "N")
+          {
+
+               cout << "Error! Invalid input. ";
+               _getch();
+               system("cls");
+          }
+
+     } while (*confirmation != "Y" && *confirmation != "N");
+
+     if (*confirmation == "Y") {
+
+          for (int i=0; i<*numberOfChildren; i++) {
+               if (children[i]->getAge() >= 18) {
+                    children[i]->forceEnd();
+                    *numberOfRemovedChildren = *numberOfRemovedChildren +1;
+               }
+          }
+
+          sortChildren(children, numberOfChildren);
+
+          for (int i=*numberOfChildren-1; i>=(*numberOfChildren-*numberOfRemovedChildren); i--) {
+               delete children[i];
+          }
+
+          *numberOfChildren = *numberOfChildren - *numberOfRemovedChildren;
+     }
+
+     delete confirmation;
+
+     cout<<"Successfully purged children! Press any key to return.";
+     _getch();
 
 }
-void purgeChildren(){
+
+//finished up to here
+
+void workshopMenu() {
+     //ascii art?
+
 
 }
 void elfToy(User *users[MAXUSERS], int *numberOfUsers){
@@ -1225,8 +1562,8 @@ void menuSanta(User * users[MAXUSERS], int *numberOfUsers, Child * children[MAXC
                cout << "\t\t\t" << "\t\t\t\t1. Add New Child" << endl;
                cout << "\t\t\t" << "\t\t\t\t2. View/Edit Child" << endl;
                cout << "\t\t\t" << "\t\t\t\t3. Update Niceness Rating" << endl;
-               cout << "\t\t\t" << "\t\t\t\t4. Auto Assign Gift" << endl;
-               cout << "\t\t\t" << "\t\t\t\t5. Auto Assign Gift To All" << endl;
+               cout << "\t\t\t" << "\t\t\t\t4. Assign Gifts" << endl;
+               cout << "\t\t\t" << "\t\t\t\t5. Auto Assign Gifts To All" << endl;
                cout << "\t\t\t" << "\t\t\t\t6. Purge 18+ Children" << endl;
                cout << "\t\t\t" << "\t\t\t\t7. Assign Toy to Elf" << endl;
                cout << "\t\t\t" << "\t\t\t\t8. Workshop Progress" << endl;
@@ -1257,13 +1594,13 @@ void menuSanta(User * users[MAXUSERS], int *numberOfUsers, Child * children[MAXC
                viewChild(children, numberOfChildren);
                break;
           case 4:
-               assignGift();
+               assignGift(children, numberOfChildren);
                break;
           case 5:
-               assignAllGifts();
+               assignAllGifts(children, numberOfChildren);
                break;
           case 6:
-               purgeChildren();
+               purgeChildren(children, numberOfChildren);
                break;
           case 7:
                elfToy(users, numberOfUsers); //works
@@ -1429,7 +1766,9 @@ int login(){
 
      return *permission;
 }
-void welcome(){
+
+//welcom screen
+void welcomeScreen(){
      double start(0);
      system("color F9");
 
@@ -2654,14 +2993,23 @@ void welcome(){
      delay(50);
      system("color F1");
 }
-//main function
+
+void exitScreen() {
+     //todo
+}
+
+
+//****MAIN FUNCTION****
 int main(){
 
      //setupConsole();
      system("color F4");
+
+     srand((unsigned int)time(NULL));
      //changeColor(12, 15);
 
      int *permission = new (nothrow) int(0);
+
 
 
      //cout<<getYearsSince(985323600);
@@ -2688,11 +3036,12 @@ int main(){
 
     loadFiles(users, numberOfUsers, children, numberOfChildren, toys);
 
+     //viewChild(children, numberOfChildren);
     //cout<<(*toys)[3][0];
 
 
 
-//    viewChild(children,numberOfChildren);
+    //viewChild(children,numberOfChildren);
 
   //  cout<<children[2]->getNicenessRating();
 
@@ -2725,7 +3074,7 @@ int main(){
 
 
 
-
+//todo exit screen
 
      _getch();
      return EXIT_SUCCESS;
@@ -2749,3 +3098,94 @@ void password (){
   cout << "nts1 and nts2: " << (ptr_hash(nts1)==ptr_hash(nts2)) << '\n';
   cout << "str1 and str2: " << (==str_hash(str2)) << '\n';
 }*/
+
+//elf
+/*void newChild() {
+     string *name = new string;
+     int *birthday = new int;
+     bool *gender = new bool;
+     string *homeAddress = new string;
+     int *numberOfSiblings = new int;
+
+     string *birthdayInput = new string;
+     string *genderInput = new string;
+
+     cout<<"Enter Child's name: ";
+     getline(cin, *name);
+
+
+     bool *error = new (nothrow) bool;
+
+     do {
+          cout<<"Enter Child's birthday (YYYY/MM/DD): ";
+          getline(cin, *birthdayInput);
+
+          *error = false;
+
+          if (birthdayInput->length()!=10) {
+               *error = true;
+          }
+             else {
+               for (int i = 0; i<10; i++) {
+                    if (i==4 || i== 7) {
+                         if (birthdayInput->at(i)!='/') {
+                              *error = true;
+                         }
+                    } else {
+                         if (!isdigit(birthdayInput->at(i))) {
+                              *error = true;
+                         }
+                    }
+               }
+          }
+
+
+          *birthday = dateAsUnix(birthdayInput);
+
+          if (*birthday == -1) {
+               *error = true;
+          }
+
+          if (*error == true) {
+               //todo: error message
+               system("cls");
+               cout<<"Invalid Date Format!";
+          }
+     } while (*error == true);
+
+
+     do {
+          cout<<"Enter child's gender (male or female): ";
+          getline(cin, *genderInput);
+
+
+          //*genderInput.ToLower(*genderInput);
+
+          for (int i = 0; i < genderInput->length(); i++) {
+               genderInput->at(i)=tolower(genderInput->at(i));
+          }
+
+
+
+          if (*genderInput != "male" && *genderInput != "female")
+          {
+               *error = true;
+               cout << "Error! The Gender you Inputted Does Not Exist. Please Enter a Real Gender of Male or Female. ";
+               _getch();
+               system("cls");
+          }
+
+     } while (*error == true);
+
+
+     /**usersFile >> *birthday;
+     *usersFile >> *gender;
+     *usersFile >> *homeAddress;
+     *usersFile >> *numberOfSiblings;*/
+
+     //Child tempChild(name, birthday, gender, homeAddress, numberOfSiblings);
+
+     //children.push_back(tempChild);
+
+     //delete tempChild();
+//}
