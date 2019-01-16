@@ -266,7 +266,7 @@ void errorHandler(int errorCode) {
      system("cls");
 }
 
-
+/*
 //returns -1 if users file not found
 //returns -2 if children file not found
 //returns -3 if toys file not found
@@ -401,70 +401,7 @@ int loadFiles(User * users, int *numberOfUsers, Child * children, int *numberOfC
 
 
 
-     /*//load children
-     ifstream childrensFile;
-     childrensFile.open("children.txt");
-
-     string *nameChild = new string("");
-     int *birthday = new int;
-     int *gender = new int;
-     string *homeAddress = new string;
-     int *numberOfSiblings = new int;
-     int *cookieRating = new int;
-     int *nicenessRating = new int;
-     int *toyAssignedChild = new int;
-
-
-children.reserve(100);
-
-
-
-
-     //Child tempChild;
-
-     //open children's file
-     if (childrensFile.is_open()) {
-
-          while (!childrensFile.eof())
-          {
-
-               getline(childrensFile, *nameChild, '$');
-               childrensFile >> *birthday;
-               childrensFile >> *gender;
-               getline(childrensFile, *homeAddress, '$');
-               childrensFile >> *numberOfSiblings;
-               childrensFile >> *cookieRating;
-               childrensFile >> *nicenessRating;
-               childrensFile >> *toyAssignedChild;
-
-               string _name = *nameChild;
-               cout<<_name;
-
-               int _birthday = *birthday;
-               cout<<_birthday;
-
-               string _homeAddress = *homeAddress;
-               cout<<_homeAddress;
-
-               int _numberOfSiblings = *numberOfSiblings;
-               cout<<_numberOfSiblings;
-
-               children.push_back(Child(_name, _birthday, _homeAddress, 69));
-               cout<<children.back().getSiblingNumber();
-               cout<<"hies";
-
-               for (int i = 0; i<children.size(); i++) {
-                    cout<<"\nnumber"<<i<<"hi"<<children.at(i).getSiblingNumber();
-               }
-
-          }
-          childrensFile.close();
-          cout<<"hello";
-     }
-
-     //children.erase (children.begin()+3);
-
-*/
+     //load children
      //for (int i = 0; i<children.size(); i++) {
      //     cout<<"\nnumber"<<i<<"hi"<<children.at(i).getSiblingNumber();
      //}
@@ -477,7 +414,7 @@ children.reserve(100);
 //cout<<"hi";
 
 
-     //end load children*/
+     //end load children
 
 
      //load toys
@@ -507,7 +444,7 @@ children.reserve(100);
 
      return 1;
 
-}
+}*/
 
 //returns unix time on success
 //returns -1 on fail
