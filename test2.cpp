@@ -29,16 +29,21 @@ using namespace std;
 
 
 //****CONSTANTS****
+//screen width and high
 #define SCREENSIZEWIDTH 1080
 #define SCREENSIZEHEIGHT 720
 
+//when we have 0/0 toys made, is it 100% done or 0% done?
+#define PROGRESSATZERO "100"
 
+//number of toys available to be made
 #define NUMOFTOYS 10
 
+//maximum ammount of memory to allocate for the users and childre
 #define MAXCHILDREN 100
 #define MAXUSERS 50
 
-
+//lookup table, matches toy number with toy name
 map<int, string> toysMap = {
     { 0, "Unassigned" },
     { 1, "Teddy bear" },
@@ -62,36 +67,32 @@ map<int, string> toysMap = {
 //prototype for get year since function. this is the only function called by a class, so it must be declared above the classes
 int getYearsSince(int *dateInUnixTime);
 
+//class for users a.k.a. elf
 class User {
 private:
      //name of elf
      string *name = new (nothrow) string("");
      //username of elf
      string *username = new (nothrow) string("");
-     //date of hire in unix time
+     //date of hire in unix epoch time
      int *hireDate = new (nothrow) int(0);
-     //years since hire
-     //calculatable value: int *yearsSinceHire = new (nothrow) int(0);
      //toy assigned (see lookup table)
      int *toyAssigned = new (nothrow) int(0);
      //number of toys made
      int *toysMade = new (nothrow) int(0);
-     //percent progress (0-100)
-     //calculatable value: int *progress = new (nothrow) int(0);
 
 public:
-     //init User
+     //purpose: initalize User
+     //arguments: username, name, date of hire (since epoch), toy assigned to elf, number of toys the elf has made so far
+     //returns: nothing!
      User (string *_username, string *nameInput, int *hireDateInput, int *_toyAssigned, int *numberOfToysMade) {
           *username = *_username;
 
           *name = *nameInput;
+          //removes newline character, which may be artifact of text file
           name->erase(std::remove(name->begin(), name->end(), '\n'), name->end());
 
           *hireDate = *hireDateInput;
-
-          //calculatable value: *yearsSinceHire = getYearsSince(hireDate);
-
-          //*username = *_username;
 
           *toyAssigned = *_toyAssigned;
 
@@ -112,25 +113,24 @@ public:
      string getUsername (){
           return *username;
      }
+     int getHireDate (){
+          return *hireDate;
+     }
      void setToyAssignedToElf (int *_toyAssigned){
           *toyAssigned = *_toyAssigned;
      }
-
-
+     //function to set name of the user to zzz so that it can be sorted to the end of the array, then deleted
+     void forceEnd() {
+          *name = "zzz";
+     }
+     //decontructor
      ~User(){
           delete username;
           delete name;
           delete hireDate;
-          //delete yearsSinceHire;
           delete toyAssigned;
           delete toysMade;
-          //delete progress;
      }
-     //get name
-     //string *getName() {
-     //     return *name;
-     //}
-
 };
 
 class Child {
@@ -140,7 +140,7 @@ private:
      //birthday
      int *birthday = new (nothrow) int(0);
      //age
-     //dont save calculatable value: int *age = new (nothrow) int(0);
+     //we dont save calculatable value: int *age = new (nothrow) int(0);
      //gender
      bool *gender = new (nothrow) bool;
      //home address
@@ -155,24 +155,31 @@ private:
      int *toyAssigned = new (nothrow) int(0);
 
 public:
-     //constructor
-     Child (string *nameInput, int *birthdayInput, bool *genderInput, string *homeAddressInput, int *numberOfSiblingsInput) {
-
+     //purpose: initalize User
+     //arguments: name of child, birthday (since epoch), gender (true=male, false=female), home address, number of siblings, cookie rating (1-15), niceness rating (0-100), and the toy assigned to the child (0-10, 0 is Unassigned, see lookup table)
+     //returns: nothing!
+     Child (string *nameInput, int *birthdayInput, bool *genderInput, string *homeAddressInput, int *numberOfSiblingsInput, int *_cookieRating, int *_nicenessRating, int *_toyAssignedChild) {
           *gender = *genderInput;
 
           *name = *nameInput;
+          //removes newline character, which may be artifact of text file
           name->erase(std::remove(name->begin(), name->end(), '\n'), name->end());
 
-
           *birthday = *birthdayInput;
-          //dont save calculatable value: *age = getYearsSince(birthday);
-          *homeAddress = *homeAddressInput;
-          homeAddress->erase(std::remove(homeAddress->begin(), homeAddress->end(), '\n'), homeAddress->end());
-          *numberOfSiblings = *numberOfSiblingsInput;
-          *cookieRating = 0;
-          *nicenessRating = 50;
-          *toyAssigned = 0;
 
+          //dont save calculatable value: *age = getYearsSince(birthday);
+
+          *homeAddress = *homeAddressInput;
+          //removes newline character, which may be artifact of text file
+          homeAddress->erase(std::remove(homeAddress->begin(), homeAddress->end(), '\n'), homeAddress->end());
+
+          *numberOfSiblings = *numberOfSiblingsInput;
+
+          *cookieRating = *_cookieRating;
+
+          *nicenessRating = *_nicenessRating;
+
+          *toyAssigned = *_toyAssignedChild;
      }
 
 
@@ -197,6 +204,7 @@ public:
      int getBirthdayUnix() {
           return *birthday;
      }
+     //convert birthday from unix time to human readable date
      string getBirthdayReadable() {
           time_t t = *birthday;
           struct tm *tm = localtime(&t);
@@ -210,6 +218,7 @@ public:
      bool getGenderBool() {
           return *gender;
      }
+     //returns user readable gender as a string
      string getGenderReadable() {
           if (*gender == true) {
                return "Male";
@@ -217,7 +226,7 @@ public:
                return "Female";
           }
      }
-
+     //error traps, then sets the cookie rating
      void setCookieRating(int *_cookieRating) {
           if (*_cookieRating > 15) {
                *_cookieRating = 15;
@@ -227,6 +236,7 @@ public:
 
           *cookieRating = *_cookieRating;
      }
+     //error traps, then sets the niceness rating
      void setNicenessRating(int *nicenessInput) {
           if (*nicenessInput > 100) {
                *nicenessInput = 100;
@@ -239,6 +249,7 @@ public:
      void setHomeAddress(string *_homeAddress) {
           *homeAddress = *_homeAddress;
      }
+     //error traps, then sets the number of siblings
      void setNumberOfSiblings(int *_numberOfSiblings) {
           if (*_numberOfSiblings < 0) {
                *_numberOfSiblings = 0;
@@ -246,7 +257,7 @@ public:
 
           *numberOfSiblings = *_numberOfSiblings;
      }
-
+     //error traps, then sets the assigned toy
      void setAssignedToy(int *_toyAssigned) {
           if (*_toyAssigned > 10) {
                *_toyAssigned = 10;
@@ -256,16 +267,16 @@ public:
 
           *toyAssigned = *_toyAssigned;
      }
-
+     //function to set name of the user to zzz so that it can be sorted to the end of the array, then deleted
      void forceEnd() {
           *name = "zzz";
      }
-
+     //function for debugging
      void show() {
           cout<<"\nName: "<<*name<<"\nBirthday"<<*birthday;
      }
 
-
+     //deconstructor
      ~Child(){
           delete name;
           delete birthday;
@@ -331,7 +342,7 @@ int getYearsSince(int *dateInUnixTime) {
 
 void setScreenPosAndSize () {
      HWND consoleWindow = GetConsoleWindow();
-	   SetWindowPos(consoleWindow, HWND_TOP, -7, -30, 1080, 720, SWP_NOZORDER);
+	SetWindowPos(consoleWindow, HWND_TOP, -7, -30, 1080, 720, SWP_NOZORDER);
 }
 
 void changeColor(int foreground, int background) {
@@ -404,6 +415,24 @@ int dateAsUnix(string * dateString) {
      }
 }
 
+void updateToys(Child * children[MAXCHILDREN], int * numberOfChildren, User * users[MAXUSERS], int *numberOfUsers, int (*toys)[NUMOFTOYS][2]) {
+
+     for (int i = 0; i < NUMOFTOYS; i++) {
+         (*toys)[i][0]=0;
+         (*toys)[i][1]=0;
+     }
+
+
+
+     for (int i = 0; i<*numberOfUsers; i++) {
+          (*toys)[users[i]->getToyAssignedToElf()-1][0] += users[i]->getToysMade();
+     }
+
+     for (int i = 0; i<*numberOfChildren; i++) {
+          (*toys)[children[i]->getAssignedToy()-1][1]++;
+     }
+
+}
 
 void sortChildren(Child * children[MAXCHILDREN], int * numberOfChildren) {
 
@@ -416,7 +445,7 @@ void sortChildren(Child * children[MAXCHILDREN], int * numberOfChildren) {
 
     for (i = 0; i < *numberOfChildren - 1; i++)
     {
-         cout<<"newloop"<<i<<"\n";
+      //   cout<<"newloop"<<i<<"\n";
         min = children[i]->getName(); // the first element is Min value
         pos = i;
 
@@ -424,10 +453,10 @@ void sortChildren(Child * children[MAXCHILDREN], int * numberOfChildren) {
         for (j = i + 1; j < *numberOfChildren; j++) // finding smaller value that Min
         {
 
-              cout<<"compare"<<j<<"\n";
+          //    cout<<"compare"<<j<<"\n";
              if (children[j]->getName() < min)
              {
-                   cout<<"yes"<<j<<"\n";
+          //         cout<<"yes"<<j<<"\n";
                  min = children[j]->getName();
                  pos = j;
              }
@@ -482,43 +511,59 @@ void sortChildren(Child * children[MAXCHILDREN], int * numberOfChildren) {
    }*/
 }
 
+void sortUsers(User * users[MAXCHILDREN], int * numberOfUsers) {
 
-//todo sort users
-/*
-double selectionSort(int array[])
-{
-   int i(0), j(0), temp(0);
-   int min(100), pos(0);
-
-
-
-   for (i = 0; i < SIZE - 1; i++)
-   {
-       min = array[i]; // the first element is Min value
-       pos = i;
-
-       for (j = i + 1; j < SIZE; j++) // finding smaller value that Min
-       {
-           if (array[j] < min)
-           {
-               min = array[j];
-               pos = j;
+      int i,j,tmp;
+      for (i = 1; i < *numberOfUsers; i++) {
+           j = i;
+          // cout<<users[j - 1]->getName()<<" "<<
+           while (j > 0 && users[j - 1]->getName() > users[j]->getName()) {
+                swap(users[j-1], users[j]);
            }
-       }
-       temp = array[i]; // swap selected element and Min value
-       array[i] = array[pos];
-       array[pos] = temp;
-   }
-
-
-   return 0;
-}*/
-
-void sortUsers() {
-
+      }
 
 }
 
+bool userExists(string *username) {
+     ifstream *loginFile = new ifstream;
+     loginFile->open("login.txt");
+
+     string *usernameToTest = new (nothrow) string;
+     bool *usernameFound = new bool(false);
+     //string *usernameToTest = new string;
+     size_t *hashToTest = new size_t;
+     int *permissionLevel = new int;
+
+
+     //open login file
+     if (loginFile->is_open()) {
+
+          while (!loginFile->eof()) {
+
+               *loginFile >> *usernameToTest;
+               *loginFile >> *hashToTest;
+               *loginFile >> *permissionLevel;
+
+               if (*username==*usernameToTest) {
+                    *usernameFound=true;
+                    break;
+               }
+          }
+
+
+          loginFile->close();
+
+
+          if (*usernameFound == true) {
+               //user exists
+               return 1;
+
+          } else {
+               return 0;
+          }
+
+     }
+}
 
 
 /* NOTES
@@ -701,7 +746,7 @@ int loadFiles(User * users[MAXUSERS], int *numberOfUsers, Child * children[MAXCH
 
                *genderBool = (bool)(*gender);
 
-               children[*numberOfChildren] = new (nothrow) Child(nameChild,birthday,genderBool,homeAddress,numberOfSiblings);
+               children[*numberOfChildren] = new (nothrow) Child(nameChild,birthday,genderBool,homeAddress,numberOfSiblings, cookieRating, nicenessRating, toyAssignedChild);
 
                //children[*numberOfChildren]->show();
                //_getch();
@@ -748,11 +793,11 @@ int loadFiles(User * users[MAXUSERS], int *numberOfUsers, Child * children[MAXCH
 
          for (int i = 0; i < NUMOFTOYS; i++) {
 
-              fin >> *needed;
               fin >> *made;
+              fin >> *needed;
 
-              (*toys)[i][0]=*needed;
-              (*toys)[i][1]=*made;
+              (*toys)[i][0]=*made;
+              (*toys)[i][1]=*needed;
          }
          fin.close();
     }
@@ -761,6 +806,73 @@ int loadFiles(User * users[MAXUSERS], int *numberOfUsers, Child * children[MAXCH
 
 }
 
+
+int saveFiles(User * users[MAXUSERS], int *numberOfUsers, Child * children[MAXCHILDREN], int * numberOfChildren, int (*toys)[NUMOFTOYS][2]) {
+
+     sortUsers(users, numberOfUsers);
+     sortChildren(children, numberOfChildren);
+
+     //load users
+     ofstream fin;
+     fin.open("users.txt");
+
+     //open user file
+     if (fin.is_open()) {
+
+          for (int i =0; i< *numberOfUsers; i++) {
+
+               if (i != 0) { fin<<"\n";}
+               fin << users[i]->getUsername()<<"\n";
+               fin << users[i]->getName()<<"$\n";
+               fin << users[i]->getHireDate()<<"\n";
+               fin << users[i]->getToyAssignedToElf()<<"\n";
+               fin << users[i]->getToysMade();
+          }
+
+          fin.close();
+     }
+
+
+     fin.open("children.txt");
+
+    //open user file
+    if (fin.is_open()) {
+         for (int i = 0; i < *numberOfChildren; i++) {
+
+              if (i != 0) { fin << "\n";}
+              fin << children[i]->getName()<<"$\n";
+              fin << children[i]->getBirthdayUnix()<<"\n";
+              fin << children[i]->getGenderBool()<<"\n";
+              fin << children[i]->getHomeAddress()<<"$\n";
+              fin << children[i]->getSiblingNumber()<<"\n";
+              fin << children[i]->getCookieRating()<<"\n";
+              fin << children[i]->getNicenessRating()<<"\n";
+              fin << children[i]->getAssignedToy();
+         }
+
+         fin.close();
+    }
+
+
+    //load toys
+    fin.open("toys.txt");
+
+   //open user file
+   if (fin.is_open()) {
+        for (int i = 0; i < NUMOFTOYS; i++) {
+
+            if (i != 0) { fin << "\n";}
+            fin << (*toys)[i][0]<<"\n";
+            fin << (*toys)[i][1];
+
+        }
+
+        fin.close();
+   }
+
+    return 1;
+
+}
 
 
 
@@ -1040,7 +1152,9 @@ void addChild(Child * children[MAXCHILDREN], int * numberOfChildren){
      string *childGender = new (nothrow) string;
      string *childHomeAddress = new (nothrow) string;
      int *childNumberOfSiblings = new (nothrow) int(0);
-     int *childToyAssigned = new (nothrow) int(0);
+     int *toyAssigned = new (nothrow) int(0);
+     int *nicenessRating = new (nothrow) int(50);
+     int *cookieRating = new (nothrow) int(1);
      bool *error = new (nothrow) bool;
      bool *genderBool = new (nothrow) bool;
 
@@ -1157,7 +1271,7 @@ void addChild(Child * children[MAXCHILDREN], int * numberOfChildren){
      } while(*error == true);*/
 
 
-     children[*numberOfChildren] = new (nothrow) Child(childName,childBirthday,genderBool,childHomeAddress,childNumberOfSiblings);
+     children[*numberOfChildren] = new (nothrow) Child(childName,childBirthday,genderBool,childHomeAddress,childNumberOfSiblings, cookieRating, nicenessRating, toyAssigned);
 
      *numberOfChildren = (*numberOfChildren + 1);
 
@@ -1172,9 +1286,11 @@ void addChild(Child * children[MAXCHILDREN], int * numberOfChildren){
      delete childGender;
      delete childHomeAddress;
      delete childNumberOfSiblings;
-     delete childToyAssigned;
+     delete toyAssigned;
      delete error;
      delete genderBool;
+     delete nicenessRating;
+     delete cookieRating;
 
 
 }
@@ -1342,6 +1458,7 @@ void purgeChildren(Child * children[MAXCHILDREN], int * numberOfChildren){
 
      do
      {
+          system("cls");
           cout << "Are you sure you want to purge all children 18+ (Y or N) --> ";
           fflush(stdin);
           getline(cin, *confirmation);
@@ -1389,12 +1506,21 @@ void workshopMenu(User *users[MAXUSERS], int *numberOfUsers, int (*toys)[NUMOFTO
      //todo: ascii art?
 
 
-     int *userNumber = new (nothrow) int;
+
+     int *userNumber = new (nothrow) int(-1);
      for (int i = 0; i<*numberOfUsers; i++) {
           if (users[i]->getUsername() == *username) {
                *userNumber = i;
           }
      }
+
+     if (*userNumber == -1) {
+          *userNumber = 0;
+          system("cls");
+          cout<<"Not logged in as Elf! Using "<<users[*userNumber]->getName()<<" to test.\nPress any key to continue.";
+          _getch();
+     }
+     //cout<<"hi";
      int *toyAssigned = new (nothrow) int(users[*userNumber]->getToyAssignedToElf() -1);
 
      int *input = new (nothrow) int;
@@ -1403,12 +1529,17 @@ void workshopMenu(User *users[MAXUSERS], int *numberOfUsers, int (*toys)[NUMOFTO
      do {
 
           system("cls");
-          cout<<"Hi "<<users[*userNumber]->getName()<<"\n";
+          cout<<"Hi "<<users[*userNumber]->getName()<<"!\n";
           cout<<"You have been assigned: "<< toysMap.at(*toyAssigned +1)<<"\n";
-          cout<<"You have made: "<< users[*userNumber]->getToysMade()<<"\n";
-          cout<<"Total made: "<< (*toys)[*toyAssigned][0]<<"\n";
-          cout<<"Total needed: "<< (*toys)[*toyAssigned][1]<<"\n";
-          cout<<"Percent progress: "<< (int)((float)((float)(*toys)[*toyAssigned][0]/(float)(*toys)[*toyAssigned][1])*100)<<"%\n\n";
+          cout<<"You have made: \t\t"<< users[*userNumber]->getToysMade()<<"\n";
+          cout<<"Total made: \t\t"<< (*toys)[*toyAssigned][0]<<"\n";
+          cout<<"Total needed: \t\t"<< (*toys)[*toyAssigned][1]<<"\n";
+
+          if ((*toys)[*toyAssigned][1]==0) {
+               cout<<"Percent progress: \t"<< PROGRESSATZERO <<"%\n\n";
+          } else {
+               cout<<"Percent progress: \t"<< (int)((float)((float)(*toys)[*toyAssigned][0]/(float)(*toys)[*toyAssigned][1])*100)<<"%\n\n";
+          }
 
           cout<<"Use arrow keys to increase number of toys made. Use enter or esc to exit.";
 
@@ -1447,7 +1578,21 @@ void workshopProgress(int (*toys)[NUMOFTOYS][2]){
      system("cls");
 
      for (int i =0; i <NUMOFTOYS; i++) {
-          cout<< toysMap.at(i +1)<<": "<<(*toys)[i][0]<<"/"<<(*toys)[i][1]<<" or "<< (int)((float)((float)(*toys)[i][0]/(float)(*toys)[i][1])*100)<<"%\n";
+
+          cout<< toysMap.at(i +1)<<": \t";
+
+          if (i==5 || i== 7 || i==8) {
+               cout<<"\t";
+          }
+
+          cout<<(*toys)[i][0]<<"/"<<(*toys)[i][1]<<"\tor ";
+
+
+          if ((*toys)[i][1]==0) {
+               cout<<PROGRESSATZERO<<"%\n";
+          } else {
+               cout<< (int)((float)((float)(*toys)[i][0]/(float)(*toys)[i][1])*100)<<"%\n";
+          }
      }
 
      cout<<"\nPress any key to return to menu.";
@@ -1545,6 +1690,8 @@ void changePassword(string *username){
 void elfToy(User *users[MAXUSERS], int *numberOfUsers){
 
 
+     sortUsers(users, numberOfUsers);
+
      int *selection = new int (0);
      int *input = new (nothrow) int(7);
 
@@ -1631,30 +1778,364 @@ void elfToy(User *users[MAXUSERS], int *numberOfUsers){
 
 }
 
-
-//finished up to here
-
-
 void addElf(User * users[MAXUSERS], int *numberOfUsers){
 
 
+     string *username = new (nothrow) string;
+     string *name = new (nothrow) string;
+     int *hireDate = new (nothrow) int;
+     int *toyAssigned = new (nothrow) int(1);
+     int *numberOfToysMade = new (nothrow) int(0);
+     string *password = new (nothrow) string;
+     string *passwordConfirm  = new (nothrow) string;
+     string *hireDateInput = new (nothrow) string;
+     bool *error = new (nothrow) bool;
+
+
+     system("cls");
+
+     cout << "Please Input the Name of the Elf...> ";
+     fflush(stdin);
+     getline(cin, *name);
+
+     do {
+          cout << "Please Input the Hire Date of the Elf (YYYY/MM/DD)...> ";
+          getline(cin, *hireDateInput);
+
+          *error = false;
+
+          if (hireDateInput->length()!=10) {
+               *error = true;
+
+          } else {
+               for (int i = 0; i<10; i++) {
+                    if (i == 4 || i == 7) {
+                         if (hireDateInput->at(i)!='/') {
+                              *error = true;
+                         }
+                    } else {
+                         if (!isdigit(hireDateInput->at(i))) {
+                              *error = true;
+                         }
+                    }
+               }
+          }
+
+          if (!(*error)) {
+               //cout<<"hi";
+               *hireDate = dateAsUnix(hireDateInput);
+
+               if (*hireDate == -1) {
+                    *error = true;
+               }
+          }
+
+          if (*error == true) {
+               //todo: error message
+               system("cls");
+               cout<<"Invalid Date!\n";
+          }
+
+     } while (*error == true);
+
+
+     do {
+          system("cls");
+          cout << "Please Input the Username for the Elf...> ";
+          //fflush(stdin);
+          cin>> *username;
+
+          if (userExists(username)) {
+               //todo error message
+               cout<<"";
+               _getch();
+          }
+
+     } while (userExists(username));
+
+     do {
+          system("cls");
+          cout<<"Enter the Elf's password -->";
+          cin>>*password;
+          cout<<"Confirm the Elf's password -->";
+          cin>>*passwordConfirm;
+
+          if (*password != *passwordConfirm) {
+               cout<<"Error! Password do not match! Press any key to try again.";
+               _getch();
+          }
+
+     } while (*password != *passwordConfirm);
+
+//string *_username, string *nameInput, int *hireDateInput, int *_toyAssigned, int *numberOfToysMade)
+
+
+     users[*numberOfUsers] = new (nothrow) User(username,name,hireDate,toyAssigned,numberOfToysMade);
+
+     *numberOfUsers = (*numberOfUsers + 1);
+
+     ofstream loginFile;
+     loginFile.open("login.txt", ios::app);
+
+     loginFile<<"\n"<<*username<<"\n";
+     loginFile<<generateHash(username, password)<<"\n";
+     loginFile<<"1";
+
+
+     delete username;
+     delete name;
+     delete hireDate;
+     delete toyAssigned;
+     delete numberOfToysMade;
+     delete password;
+     delete passwordConfirm;
+     delete hireDateInput;
+     delete error;
+
+     cout<<"Successfully added! Press any key to return to menu.";
+     _getch();
+     system("cls");
 
 
 }
-void fireElf(){
+
+void fireElf(User * users[MAXUSERS], int *numberOfUsers){
+
+     string * confirmation = new (nothrow) string;
+     //int * numberOfRemovedUsers = new (nothrow) int(0);
+
+     int *selection = new int (0);
+     int *input = new (nothrow) int(7);
+
+
+
+     do {
+          system("cls");
+
+          cout<<"Select Elf to terminate, then press enter. (Press esc to go back)\n\n";
+
+          for (int i=0; i<*numberOfUsers; i++) {
+               //todo: formating of names by length
+               if (*selection == i) {
+                    changeColor(15, 4);
+               }
+               cout<<users[i]->getName()<<"\n";
+
+               ;
+               if (*selection == i) {
+                    changeColor(4, 15);
+               }
+          }
+
+          *input = arrowKeys(true);
+          switch (*input) {
+               case 1:
+                    if (*selection>0) {*selection = *selection -1;}
+                    break;
+               case 4:
+                    if (*selection<*numberOfUsers-1) {*selection = *selection +1;}
+                    break;
+          }
+
+
+     } while (*input != 6 && *input != 0);
+
+     if (*input == 0) {
+
+          do
+          {
+               system("cls");
+               cout << "Are you sure you want to terminate "<<users[*selection]->getName()<<" (Y or N) --> ";
+               fflush(stdin);
+               getline(cin, *confirmation);
+
+               for (int i = 0; i < confirmation->length(); i++) {
+                    confirmation->at(i)=toupper(confirmation->at(i));
+               }
+
+               if (*confirmation != "Y" && *confirmation != "N")
+               {
+
+                    cout << "Error! Invalid input. ";
+                    _getch();
+                    system("cls");
+               }
+
+          } while (*confirmation != "Y" && *confirmation != "N");
+
+          if (*confirmation == "Y") {
+
+               string * username = new (nothrow) string;
+               *username = users[*selection]->getUsername();
+
+               //remove creds from login file
+               ifstream *loginFile = new ifstream;
+               loginFile->open("login.txt");
+
+               ofstream *outputFile = new ofstream;
+               outputFile->open("loginTemp.txt");
+
+               string *usernameToTest = new string("");
+               size_t *hashToTest = new size_t;
+               int *permissionLevel = new int;
+
+               while (!loginFile->eof()) {
+
+                    if (*usernameToTest != "" && *usernameToTest != *username) {
+                         *outputFile<<"\n";
+                    }
+
+                    *loginFile>>*usernameToTest;
+
+                    if (*username!=*usernameToTest) {
+                         *outputFile<<*usernameToTest<<"\n";
+                         *loginFile>> *hashToTest;
+                         *outputFile << *hashToTest<<"\n";
+                         *loginFile >> *permissionLevel;
+                         *outputFile << *permissionLevel;
+                    } else {
+                         //*outputFile<<*usernameToTest<<"\n";
+                         *loginFile>> *hashToTest;
+                         //*outputFile << *hashToTest<<"\n";
+                         *loginFile >> *permissionLevel;
+                         //*outputFile << *permissionLevel;
+                    }
+               }
+
+
+               loginFile->close();
+               outputFile->close();
+
+               remove("login.txt");
+               rename("loginTemp.txt", "login.txt");
+
+
+               //force the user to be sorted to the end of the array
+               users[*selection]->forceEnd();
+               //sort the user to the end of the array
+               sortUsers(users, numberOfUsers);
+               //delete the user
+               delete users[*numberOfUsers];
+               //decrease the number of users
+               *numberOfUsers = *numberOfUsers - 1;
+
+
+               cout<<"Successfully removed elf! Press any key to return.";
+               _getch();
+
+
+
+          }
+
+          delete confirmation;
+
+
+
+     }
+
+
+     delete selection;
+     delete input;
+
+
+
 
 }
-void resetElfPassword(){
+
+void resetElfPassword(User * users[MAXUSERS], int *numberOfUsers){
+
+     int *selection = new int (0);
+     int *input = new (nothrow) int(7);
+
+
+
+     do {
+          system("cls");
+
+          cout<<"Select Elf to reset password, then press enter. (Press esc to go back)\n\n";
+
+          for (int i=0; i<*numberOfUsers; i++) {
+               //todo: formating of names by length
+               if (*selection == i) {
+                    changeColor(15, 4);
+               }
+               cout<<users[i]->getName()<<"\n";
+
+               ;
+               if (*selection == i) {
+                    changeColor(4, 15);
+               }
+          }
+
+          *input = arrowKeys(true);
+          switch (*input) {
+               case 1:
+                    if (*selection>0) {*selection = *selection -1;}
+                    break;
+               case 4:
+                    if (*selection<*numberOfUsers-1) {*selection = *selection +1;}
+                    break;
+          }
+
+
+     } while (*input != 6 && *input != 0);
+
+     if (*input == 0) {
+          string * username = new (nothrow) string;
+          *username = users[*selection]->getUsername();
+
+
+          changePassword(username);
+
+     }
+
+
+     delete selection;
+     delete input;
 
 }
 
+void resetRatings(Child * children[MAXCHILDREN], int * numberOfChildren){
 
-void modeJanuary(){
+     string * confirmation = new (nothrow) string;
+     int * nicenessRating = new (nothrow) int(50);
+     int * cookieRating = new (nothrow) int(1);
+
+
+     do
+     {
+          system("cls");
+          cout << "Are you sure you want to reset cookie and niceness ratings to zero? (Y or N) --> ";
+          fflush(stdin);
+          getline(cin, *confirmation);
+
+          for (int i = 0; i < confirmation->length(); i++) {
+               confirmation->at(i)=toupper(confirmation->at(i));
+          }
+
+          if (*confirmation != "Y" && *confirmation != "N")
+          {
+
+               cout << "Error! Invalid input. ";
+               _getch();
+               system("cls");
+          }
+
+     } while (*confirmation != "Y" && *confirmation != "N");
+
+     if (*confirmation == "Y") {
+          for (int i=0; i<*numberOfChildren; i++) {
+               children[i]->setNicenessRating(nicenessRating);
+               children[i]->setCookieRating(cookieRating);
+          }
+     }
+
+     delete nicenessRating;
+     delete cookieRating;
+     delete confirmation;
 
 }
-void resetDefault(){
 
-}
 
 
 void menuElf(User * users[MAXUSERS], int *numberOfUsers, Child * children[MAXCHILDREN], int * numberOfChildren, int (*toys)[NUMOFTOYS][2], string *username){
@@ -1662,51 +2143,56 @@ void menuElf(User * users[MAXUSERS], int *numberOfUsers, Child * children[MAXCHI
      int *selectionelf = new (nothrow) int(0);
      bool *error = new (nothrow) bool;
 
-     do {
-          *error = false;
-          system("cls");
-          cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
-          cout << "\t\t\t" << "  _______  ___       _______      ___      ___   _______  _____  ___   ____  ____  " << endl;
-          cout << "\t\t\t" << " /\"     \"||\"  |     /\"     \"|    |\"  \\    /\"  | /\"     \"|(\\\"   \\|\"  \\ (\"  _||_ \" | " << endl;
-          cout << "\t\t\t" << "(: ______)||  |    (: ______)     \\   \\  //   |(: ______)|.\\\\   \\    ||   (  ) : | " << endl;
-          cout << "\t\t\t" << " \\/    |  |:  |     \\/    |       /\\\\  \\/.    | \\/    |  |: \\.   \\\\  |(:  |  | . ) " << endl;
-          cout << "\t\t\t" << " // ___)_  \\  |___  // ___)      |: \\.        | // ___)_ |.  \\    \\. | \\\\ \\__/ //  " << endl;
-          cout << "\t\t\t" << "(:      \"|( \\_|:  \\(:  (         |.  \\    /:  |(:      \"||    \\    \\ | /\\\\ __ //\\  " << endl;
-          cout << "\t\t\t" << " \\_______) \\_______)\\__/         |___|\\__/|___| \\_______) \\___|\\____\\)(__________) " << endl;
-          cout << "\t\t\t" << "\t\t\t\t1. Add New Child" << endl;
-          cout << "\t\t\t" << "\t\t\t\t2. View/Edit Child" << endl;
-          cout << "\t\t\t" << "\t\t\t\t3. Update Niceness Rating" << endl;
-          cout << "\t\t\t" << "\t\t\t\t4. Workshop Menu" << endl;
-          cout << "\t\t\t" << "\t\t\t\t5. Change Password" << endl;
-          cout << "\t\t\t" << "\t\t\t\t6. Exit" << endl;
-          cout << "\t\t\t" << "\t\t\t\t" << ">";
-          cin >> *selectionelf;
-          if (*selectionelf < 1 || *selectionelf > 6)
-          {
-               cout << "Error! Your Selection Must be Within 1 & 6" << endl;
-               *error = true; //Error Code 46 means Error = true
-               _getch();
-               system("cls");
-          }
-     } while(*error == true);
+     while (*selectionelf !=6) {
 
-     switch(*selectionelf)
-     {
-     case 1:
-          addChild(children, numberOfChildren);
-          break;
-     case 2:
-          viewChild(children, numberOfChildren);
-          break;
-     case 3:
-          viewChild(children, numberOfChildren);
-          break;
-     case 4:
-          workshopMenu(users, numberOfUsers, toys, username);
-          break;
-     case 5:
-          changePassword(username);
-          break;
+          do {
+               *error = false;
+               system("cls");
+               cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+               cout << "\t\t\t" << "  _______  ___       _______      ___      ___   _______  _____  ___   ____  ____  " << endl;
+               cout << "\t\t\t" << " /\"     \"||\"  |     /\"     \"|    |\"  \\    /\"  | /\"     \"|(\\\"   \\|\"  \\ (\"  _||_ \" | " << endl;
+               cout << "\t\t\t" << "(: ______)||  |    (: ______)     \\   \\  //   |(: ______)|.\\\\   \\    ||   (  ) : | " << endl;
+               cout << "\t\t\t" << " \\/    |  |:  |     \\/    |       /\\\\  \\/.    | \\/    |  |: \\.   \\\\  |(:  |  | . ) " << endl;
+               cout << "\t\t\t" << " // ___)_  \\  |___  // ___)      |: \\.        | // ___)_ |.  \\    \\. | \\\\ \\__/ //  " << endl;
+               cout << "\t\t\t" << "(:      \"|( \\_|:  \\(:  (         |.  \\    /:  |(:      \"||    \\    \\ | /\\\\ __ //\\  " << endl;
+               cout << "\t\t\t" << " \\_______) \\_______)\\__/         |___|\\__/|___| \\_______) \\___|\\____\\)(__________) " << endl;
+               cout << "\t\t\t" << "\t\t\t\t1. Add New Child" << endl;
+               cout << "\t\t\t" << "\t\t\t\t2. View/Edit Child" << endl;
+               cout << "\t\t\t" << "\t\t\t\t3. Update Niceness Rating" << endl;
+               cout << "\t\t\t" << "\t\t\t\t4. Workshop Menu" << endl;
+               cout << "\t\t\t" << "\t\t\t\t5. Change Password" << endl;
+               cout << "\t\t\t" << "\t\t\t\t6. Exit" << endl;
+               cout << "\t\t\t" << "\t\t\t\t" << ">";
+               cin >> *selectionelf;
+               if (*selectionelf < 1 || *selectionelf > 6)
+               {
+                    cout << "Error! Your Selection Must be Within 1 & 6" << endl;
+                    *error = true; //Error Code 46 means Error = true
+                    _getch();
+                    system("cls");
+               }
+          } while(*error == true);
+
+          switch(*selectionelf)
+          {
+          case 1:
+               addChild(children, numberOfChildren);
+               break;
+          case 2:
+               viewChild(children, numberOfChildren);
+               break;
+          case 3:
+               viewChild(children, numberOfChildren);
+               break;
+          case 4:
+               updateToys(children, numberOfChildren, users, numberOfUsers, toys);
+               workshopMenu(users, numberOfUsers, toys, username);
+               break;
+          case 5:
+               changePassword(username);
+               break;
+          }
+
      }
 
      delete selectionelf;
@@ -1776,6 +2262,7 @@ void menuSanta(User * users[MAXUSERS], int *numberOfUsers, Child * children[MAXC
                elfToy(users, numberOfUsers); //works
                break;
           case 8:
+               updateToys(children, numberOfChildren, users, numberOfUsers, toys);
                workshopProgress(toys);
                break;
           case 9:
@@ -1794,47 +2281,52 @@ void menuMrsClaus(User * users[MAXUSERS], int *numberOfUsers, Child * children[M
 
      int *selectionmrsclaus = new (nothrow) int(0);
      bool *error = new (nothrow) bool;
-     do {
-          *error = false;
-          system("cls");
-          cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
-          cout << "\t\t\t\t" << "  __  __               _____ _                   __  __                  " << endl;
-          cout << "\t\t\t\t" << " |  \\/  |             / ____| |                 |  \\/  |                 " << endl;
-          cout << "\t\t\t\t" << " | \\  / |_ __ ___    | |    | | __ _ _   _ ___  | \\  / | ___ _ __  _   _ " << endl;
-          cout << "\t\t\t\t" << " | |\\/| | \'__/ __|   | |    | |/ _` | | | / __| | |\\/| |/ _ \\ \'_ \\| | | |" << endl;
-          cout << "\t\t\t\t" << " | |  | | |  \\__ \\_  | |____| | (_| | |_| \\__ \\ | |  | |  __/ | | | |_| |" << endl;
-          cout << "\t\t\t\t" << " |_|  |_|_|  |___(_)  \\_____|_|\\__,_|\\__,_|___/ |_|  |_|\\___|_| |_|\\__,_|" << endl;
-          cout << "\t\t\t" << "\t\t\t\t1. Add Elf" << endl;
-          cout << "\t\t\t" << "\t\t\t\t2. Fire Elf" << endl;
-          cout << "\t\t\t" << "\t\t\t\t3. Reset Elf Password" << endl;
-          cout << "\t\t\t" << "\t\t\t\t4. Change Personal Password" << endl;
-          cout << "\t\t\t" << "\t\t\t\t" << ">";
-          cin >> *selectionmrsclaus;
-          if (*selectionmrsclaus < 1 || *selectionmrsclaus > 4)
-          {
-               cout << "Error! Your Selection Must be Within 1 & 4" << endl;
-               *error = true; //Error Code 46 means Error = true
-               _getch();
+
+     while (*selectionmrsclaus != 5) {
+
+          do {
+               *error = false;
                system("cls");
+               cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+               cout << "\t\t\t\t" << "  __  __               _____ _                   __  __                  " << endl;
+               cout << "\t\t\t\t" << " |  \\/  |             / ____| |                 |  \\/  |                 " << endl;
+               cout << "\t\t\t\t" << " | \\  / |_ __ ___    | |    | | __ _ _   _ ___  | \\  / | ___ _ __  _   _ " << endl;
+               cout << "\t\t\t\t" << " | |\\/| | \'__/ __|   | |    | |/ _` | | | / __| | |\\/| |/ _ \\ \'_ \\| | | |" << endl;
+               cout << "\t\t\t\t" << " | |  | | |  \\__ \\_  | |____| | (_| | |_| \\__ \\ | |  | |  __/ | | | |_| |" << endl;
+               cout << "\t\t\t\t" << " |_|  |_|_|  |___(_)  \\_____|_|\\__,_|\\__,_|___/ |_|  |_|\\___|_| |_|\\__,_|" << endl;
+               cout << "\t\t\t" << "\t\t\t\t1. Add Elf" << endl;
+               cout << "\t\t\t" << "\t\t\t\t2. Fire Elf" << endl;
+               cout << "\t\t\t" << "\t\t\t\t3. Reset Elf Password" << endl;
+               cout << "\t\t\t" << "\t\t\t\t4. Change Personal Password" << endl;
+               cout << "\t\t\t" << "\t\t\t\t5. Exit" << endl;
+               cout << "\t\t\t" << "\t\t\t\t" << ">";
+               cin >> *selectionmrsclaus;
+               if (*selectionmrsclaus < 1 || *selectionmrsclaus > 5)
+               {
+                    cout << "Error! Your Selection Must be Within 1 & 5" << endl;
+                    *error = true; //Error Code 46 means Error = true
+                    _getch();
+                    system("cls");
+               }
+          } while(*error == true);
+          switch(*selectionmrsclaus)
+          {
+          case 1:
+               addElf(users, numberOfUsers);
+               break;
+          case 2:
+               fireElf(users, numberOfUsers);
+               break;
+          case 3:
+               resetElfPassword(users, numberOfUsers);
+               break;
+          case 4:
+               changePassword(username);
+               break;
           }
-     } while(*error == true);
-     switch(*selectionmrsclaus)
-     {
-     case 1:
-          addElf(users);
-          break;
-     case 2:
-          fireElf();
-          break;
-     case 3:
-          resetElfPassword();
-          break;
-     case 4:
-          changePassword(username);
-          break;
+
      }
 
-     _getch();
      delete selectionmrsclaus;
      delete error;
 }
@@ -1843,51 +2335,53 @@ void menuAdmin(User * users[MAXUSERS], int *numberOfUsers, Child * children[MAXC
      //january mode
      int *selectionadmin = new (nothrow) int(0);
      bool *error = new (nothrow) bool;
-     do {
-          *error = false;
-          system("cls");
-          cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
 
-          cout << "\t\t\t\t" << "    ___       __          _     " << endl;
-          cout << "\t\t\t\t" << "   /   | ____/ /___ ___  (_)___ " << endl;
-          cout << "\t\t\t\t" << "  / /| |/ __  / __ `__ \\/ / __ \\" << endl;
-          cout << "\t\t\t\t" << " / ___ / /_/ / / / / / / / / / /" << endl;
-          cout << "\t\t\t\t" << "/_/  |_\\__,_/_/ /_/ /_/_/_/ /_/ " << endl;
-          cout << "\t\t\t" << "\t\t\t\t1. Enter Elf Menu" << endl;
-          cout << "\t\t\t" << "\t\t\t\t2. Enter Santa Menu" << endl;
-          cout << "\t\t\t" << "\t\t\t\t3. Enter Mrs Claus Menu" << endl;
-          cout << "\t\t\t" << "\t\t\t\t4. January Mode" << endl;
-          cout << "\t\t\t" << "\t\t\t\t5. Reset to Default" << endl;
-          cout << "\t\t\t" << "\t\t\t\t" << ">";
-          cin >> *selectionadmin;
-          if (*selectionadmin < 1 || *selectionadmin > 5)
-          {
-               cout << "Error! Your Selection Must be Within 1 & 5" << endl;
-               *error = true; //Error Code 46 means Error = true
-               _getch();
+     while (*selectionadmin != 5) {
+
+          do {
+               *error = false;
                system("cls");
+               cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+
+               cout << "\t\t\t\t" << "    ___       __          _     " << endl;
+               cout << "\t\t\t\t" << "   /   | ____/ /___ ___  (_)___ " << endl;
+               cout << "\t\t\t\t" << "  / /| |/ __  / __ `__ \\/ / __ \\" << endl;
+               cout << "\t\t\t\t" << " / ___ / /_/ / / / / / / / / / /" << endl;
+               cout << "\t\t\t\t" << "/_/  |_\\__,_/_/ /_/ /_/_/_/ /_/ " << endl;
+               cout << "\t\t\t" << "\t\t\t\t1. Enter Elf Menu" << endl;
+               cout << "\t\t\t" << "\t\t\t\t2. Enter Santa Menu" << endl;
+               cout << "\t\t\t" << "\t\t\t\t3. Enter Mrs Claus Menu" << endl;
+               cout << "\t\t\t" << "\t\t\t\t4. Reset child ratings" << endl;
+               cout << "\t\t\t" << "\t\t\t\t5. Exit" << endl;
+               cout << "\t\t\t" << "\t\t\t\t" << ">";
+               cin >> *selectionadmin;
+               if (*selectionadmin < 1 || *selectionadmin > 5)
+               {
+                    cout << "Error! Your Selection Must be Within 1 & 5" << endl;
+                    *error = true; //Error Code 46 means Error = true
+                    _getch();
+                    system("cls");
+               }
+          } while(*error == true);
+          switch(*selectionadmin)
+          {
+          case 1:
+               menuElf(users, numberOfUsers, children, numberOfChildren, toys, username);
+               break;
+          case 2:
+               menuSanta(users, numberOfUsers, children, numberOfChildren, toys, username);
+               break;
+          case 3:
+               menuMrsClaus(users, numberOfUsers, children, numberOfChildren, toys, username);
+               break;
+          case 4:
+               resetRatings(children, numberOfChildren);
+               break;
           }
-     } while(*error == true);
-     switch(*selectionadmin)
-     {
-     case 1:
-          menuElf(users, numberOfUsers, children, numberOfChildren, toys, username);
-          break;
-     case 2:
-          menuSanta(users, numberOfUsers, children, numberOfChildren, toys, username);
-          break;
-     case 3:
-          menuMrsClaus(users, numberOfUsers, children, numberOfChildren, toys, username);
-          break;
-     case 4:
-          modeJanuary();
-          break;
-     case 5:
-          resetDefault();
-          break;
+
      }
 
-     _getch();
+
      delete selectionadmin;
      delete error;
 }
@@ -3176,6 +3670,7 @@ int main(){
 
      //setupConsole();
      system("color F4");
+     setScreenPosAndSize();
 
      srand((unsigned int)time(NULL));
      //changeColor(12, 15);
@@ -3246,7 +3741,9 @@ int main(){
 
 //todo exit screen
 
-     _getch();
+     saveFiles(users, numberOfUsers, children, numberOfChildren, toys);
+
+
      return EXIT_SUCCESS;
 }
 
