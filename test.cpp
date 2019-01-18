@@ -1,60 +1,60 @@
-#include <stdlib.h>
-#include <iostream>
+#include <algorithm>
+#include <chrono>
 #include <conio.h>
 #include <cstdlib>
-#include <time.h>
-#include <algorithm>
-#include <functional>
-#include <string>
-#include <stdio.h>
 #include <ctype.h>
-#include <fstream>
-#include <sstream>
-#include <math.h>
-#include <chrono>
-#include <windows.h>
-#include <windef.h>
 #include <direct.h>
+#include <fstream>
+#include <functional>
 #include <iomanip>
-#include <unordered_set>
+#include <iostream>
 #include <map>
-#include <vector>
+#include <math.h>
+#include <sstream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
 #include <thread>
+#include <time.h>
+#include <unordered_set>
+#include <vector>
+#include <windef.h>
+#include <windows.h>
 
 using namespace std;
 
-
-
-void delay(long unsigned int millis){
-	//start timer
-	clock_t start = clock();
-	//check is time has elasped
-	while ((start + ((float)(millis / 1000) * CLOCKS_PER_SEC)) > (unsigned)clock());
+void delay(long unsigned int millis)
+{
+    //start timer
+    clock_t start = clock();
+    //check is time has elasped
+    while ((start + ((float)(millis / 1000) * CLOCKS_PER_SEC)) > (unsigned)clock());
 }
-
-
-
-
 
 int main()
 {
-  thread helpWatcherThread(helpWatcher);
-  helpWatcherThread.detach();
+    thread helpWatcherThread(helpWatcher);
+    helpWatcherThread.detach();
 
-  string *username = new string;
-  string *password = new string;
+    string* username = new string;
+    string* password = new string;
 
-  cout<< "\t\t\t\t\t\t" << "Enter username: ";
- getline(cin, *username);
- cout<<"hi";
- cout<< "\t\t\t\t\t\t" << "Enter password: ";
- getline(cin, *password);
+    cout << "\t\t\t\t\t\t"
+         << "Enter username: ";
+    getline(cin, *username);
+    cout << "hi";
+    cout << "\t\t\t\t\t\t"
+         << "Enter password: ";
+    getline(cin, *password);
 
+    while (1) {
+        cout << "\t\t\t\t\t\t"
+             << "Enter username: ";
+        getline(cin, *username);
+        cout << "\t\t\t\t\t\t"
+             << "Enter password: ";
+        getline(cin, *password);
+    }
 
-  while(1) {  cout<< "\t\t\t\t\t\t" << "Enter username: ";
-   getline(cin, *username);
-   cout<< "\t\t\t\t\t\t" << "Enter password: ";
-   getline(cin, *password);};
-
-  return 0;
+    return 0;
 }
