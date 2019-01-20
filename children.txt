@@ -3,54 +3,62 @@ Farrah$
 0
 123 sesame street$
 1
-1
-100
-1
+8
+4
+13
 Jack$
 1005523200
 1
 580 tuscarora drive$
 2
-1
+2
 50
-1
+10
 James$
 1007769600
 1
 555 five street$
 1
-1
+10
 50
-3
+10
 Jovan$
 1002230000
 1
 1238 fake street$
 16
-1
+7
 50
-4
+10
 Luke$
 984441600
 1
 665 hendry lane$
 1
-1
+9
 50
-5
+10
 Shaun$
 995562000
 1
 7 charterhouse cres.$
 2
-8
-75
 9
-kaden$
+75
+10
+Tristan$
+1114362000
+1
+4321 drive street$
+2
+1
+85
+8
+Kaden$
 1020873600
 1
 58 bridgeport$
 1
 1
 50
-6
+9

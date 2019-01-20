@@ -31,13 +31,21 @@ void delay(long unsigned int millis)
     while ((start + ((float)(millis / 1000) * CLOCKS_PER_SEC)) > (unsigned)clock());
 }
 
+size_t generateHash(string *username, string *password) {
+    hash<string> hash_fn;
+    return hash_fn(*username+*password);
+}
+
 int main()
 {
-    thread helpWatcherThread(helpWatcher);
-    helpWatcherThread.detach();
+//    thread helpWatcherThread(helpWatcher);
+//    helpWatcherThread.detach();
 
-    string* username = new string;
-    string* password = new string;
+    string* username = new string("mrsclaus");
+    string* password = new string("cookies");
+
+    cout<<generateHash(username, password);
+
 
     cout << "\t\t\t\t\t\t"
          << "Enter username: ";

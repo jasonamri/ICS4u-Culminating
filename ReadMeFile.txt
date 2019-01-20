@@ -43,11 +43,11 @@ System Information
 	Program Structure:
 
 		Login:
-			Admin Menu:
+
+		Admin Menu:
                     Enter Elf Menu
                     Enter Santa Menu
                     Enter Mrs Claus Menu
-                    January Menu
                     Reset to Default
                     Help
                     Exit
@@ -64,6 +64,7 @@ System Information
                Mrs.Claus Menu:
                     Add Elf
                     Fire Elf
+		    View Elves
                     Reset Elf Password
                     Change Personal Password
                     Help
@@ -78,6 +79,7 @@ System Information
                     Purge 18+ Children
                     View Elves/Assign Toy to Elf
                     Workshop Progress
+		    Christmas Eve mode
                     Change Password
                     Help
                     Exit
@@ -88,12 +90,22 @@ System Information
 
 PASSWORDS:
 
-	Each Elf will have to be registered with Mrs. Claus who will be given a default password which she can change at any time.
+	Each Elf will have to be registered with Mrs. Claus who will set a password which she can change at any time.
 
 	--> Admin accounts will be designated to IT Elfs named Jacob and Jason
 
 	Example " Enter Username: "
 		" Enter Password: "
+
+	Default Passwords:
+
+	User	  Password
+	santa 	  santa
+	mrsclaus  cookies
+	jason	  admin
+	jacob	  password
+	elf1	  hohoho
+
 
 LOCATION:
 
@@ -101,7 +113,7 @@ LOCATION:
 	--> 1. Go To My Computer
 	--> 2. Locate the USB. Double Click
 	--> 3. Locate the folder "S.A.N.N.T.A". Double Click
-	--> 4. Find "SANNTA.exe" to Run Program.
+	--> 4. Find "main.exe" to Run Program.
 
 Screen Resolution:
 
